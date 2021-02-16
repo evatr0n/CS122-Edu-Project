@@ -55,7 +55,7 @@ def crawl_nctq(source_url):
     df.to_csv("empty.csv", sep='\t')
 
     return df
-    
+
 
 def linked_urls(source_url, soup):
     '''
@@ -108,8 +108,6 @@ def make_soup(url):
         
     return soup, request
 """      
-
-
 
 
 """
