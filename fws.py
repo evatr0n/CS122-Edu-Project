@@ -7,7 +7,7 @@ from sklearn.linear_model import LassoCV, LinearRegression
 from sklearn.feature_selection import SequentialFeatureSelector
 from sklearn.metrics import r2_score
 
-def forward_selection(filepath, dependent, n_features, model = LinearRegression(),
+def forward_selection(dat, dependent, n_features, model = LinearRegression(),
                       score_method = 'r2'):
     """
     Outputs labels of independent variables which are deemed most important
@@ -27,7 +27,6 @@ def forward_selection(filepath, dependent, n_features, model = LinearRegression(
            and includes the final linear model intercept and r2 score at the end 
     """
     var_order = dict()
-    dat = pd.read_csv(filepath)
     
     X = dat.drop(dependent, axis = 1) 
     y = dat[dependent] 
