@@ -34,27 +34,24 @@ def default_calc(NCTQ_df, NCES_df, state, outcomes, all_outcomes_bool, R2):
     list_dict_regression_eqs = []
 
     for outcome in outcomes:
-        # The case where all outcomes (yi) were selected, so we will only 
-        # consider the ones with a high enough R2 value with the policy (xi)
-        # because we want to filer out outcomes that do not have a high correlation with the policy
+
+        # Create df of rows=states, col1=outcome, col2= policy1, col3=policy2,...
+        fsw_df = pd.merge(NCES_df["state", outcome], NCTQ_df, on="state")
+
+        # Perform forward selection on this outcome for all policy options
+        policies_from_outcome = fws.forward_selection(fsw_df, outcome, len(outcomes), model = LinearRegression(),
+                    score_method = 'r2')
+                # Output: (dict) a dictionary of the form {independent variable: coefficient in linear model}
+                # and includes the final linear model intercept and r2 score at the end
+
+        # The case were all outcomes are selected by default, so only consider the highly correlated outcomes
         if all_outcomes_bool:
-            # Create df of rows=states, col1=outcome, col2= policy1, col3=policy2,...
-            fsw_df = pd.merge(NCES_df["state", outcome], NCTQ_df, on="state")
-
-            # Perform forward selection on this outcome for all policy options
-            policies_from_outcome = fws.forward_selection(fsw_df, outcome, len(outcomes), model = LinearRegression(),
-                        score_method = 'r2')
-                    # Output: (dict) a dictionary of the form {independent variable: coefficient in linear model}
-                    # and includes the final linear model intercept and r2 score at the end
-
-            # The case were all outcomes are selected by default, so only consider the highly correlated outcomes
-            if all_outcomes_bool:
-                if policies_from_outcome["Model Score (r2)"] >= R2:
-                    list_dict_regression_eqs.append(policies_from_outcome)
-
-            # The case where outcomes are hand-picked by the user, ignore R2
-            else:
+            if policies_from_outcome["Model Score (r2)"] >= R2:
                 list_dict_regression_eqs.append(policies_from_outcome)
+
+        # The case where outcomes are hand-picked by the user, ignore R2
+        else:
+            list_dict_regression_eqs.append(policies_from_outcome)
 
 
     #currently does steps a - f
