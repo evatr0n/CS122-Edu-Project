@@ -4,57 +4,67 @@ import urllib3
 import certifi
 import util
 import queue
+import re
 import pandas as pd
 
+
+
+grade_to_score_map = {"Best practice": 5, "Meets goal": 4, "Nearly meets goal": 3, 
+                       "Meets goal in part": 2, "Meets a small part of goal": 1, 
+                       "Does not meet goal": 0}
+
+
 def crawl_one_page_nctq(soup, nctq_page_url, dic={}):
-    #soup = make_soup(nctq_page_url)
-    if soup: 
-        try:
+    policyname = soup.find("div", class_="page__head__content").findChildren()
+    grades_list = soup.find_all("span", class_="grade__status")
+    citation = soup.find("div", class_ = "suggestedCitation")
 
-            policyname = soup.find("section", class_="section-goals")
-            policyname = policyname.find("h2").text
+    if grades_list and citation:
+        policyname = " (".join([tag.text for tag in policyname]) + ")"
+        year = int(re.findall("\((\d+)\)", citation.text)[0]) #get year collected from citation info
+        statescoredic = {}
+        
+        for grade_category in grades_list:  # goes through each grade category and states in each category
+            qual_score = grade_category.text
+            quant_score = grade_to_score_map.get(qual_score)
+            while grade_category.name != "ul":
+                grade_category = grade_category.next_sibling
+            
+            states = grade_category.find_all("li")
+            for state in states:
+                statescoredic[state.text] = quant_score
 
-            statescoredic = {}
-            tag_list = soup.find_all("span", class_="grade__status")
-            grade_to_score_map = {"Best practice": 5, "Meets goal": 4, "Nearly meets goal": 3, 
-                                    "Meets goal in part": 2, "Meets a small part of goal": 1, 
-                                    "Does not meet goal": 0}
-            for state_policy in tag_list:
-                policyscoretext = state_policy.text
-                while state_policy.name != "ul":
-                    state_policy = state_policy.next_sibling
-                policyscore = grade_to_score_map.get(policyscoretext)
-                states = state_policy.find_all("li")
-                for state in states:
-                    statescoredic[state.text] = policyscore
+        if not dic.get("nctq_{}".format(year)):
+            dic["nctq_{}".format(year)] = {}
+        if statescoredic:
+            dic["nctq_{}".format(year)][policyname] = statescoredic
+            print(year, nctq_page_url, "read")
 
-            if statescoredic and policyname:
-                dic[policyname] = statescoredic
-                print(nctq_page_url, "succeeded")
-        except:
-            print(nctq_page_url, "failed")
+    else:
+        print(nctq_page_url, "UNABLE TO READ")
 
 
-def crawl_nctq(source_url):
+def crawl_nctq(source_url, csv_file_name):
     limiting_domain = "nctq.org"
+    prefix = "https://www.nctq.org/yearbook/national"
     source_soup = make_soup(source_url)
     url_lst = linked_urls(source_url, source_soup)
-    print(url_lst)
     visited_urls = set()
     nctq = {}
 
     for url in url_lst:
         if util.is_url_ok_to_follow(url, limiting_domain) and \
-           url not in visited_urls:
-
+            url not in visited_urls and prefix in url:
             soup = make_soup(url)
-            visited_urls.update(url)
-            crawl_one_page_nctq(soup, url, nctq)
-    
-    df = pd.DataFrame(nctq)
-    df.to_csv("empty.csv", sep='\t')
+            if soup:
+                crawl_one_page_nctq(soup, url, nctq)
+        visited_urls.add(url)
 
-    return df
+    df_dic = {year: pd.DataFrame(data) for year, data in nctq.items()}
+    
+    #df.to_csv(csv_file_name, sep='\t')
+
+    return df_dic
 
 
 def linked_urls(source_url, soup):
@@ -88,7 +98,6 @@ def make_soup(myurl):
             soup = None
     else:
         soup = None
-        print("reading", myurl, "failed")
     
     return soup
 
