@@ -164,7 +164,7 @@ for i in range(1, len(dfs)):
     if i == 1:
         final = first_frame.join(dfs[i])
     else:
-        final = new.join(dfs[i])
+        final = final.join(dfs[i])
 
 
 
