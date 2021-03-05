@@ -46,7 +46,7 @@ def crawl_one_page_nctq(soup, nctq_page_url, dic={}):
         if not dic.get("nctq_{}".format(year)):
             dic["nctq_{}".format(year)] = {}
         if statescoredic:
-            statescoredic["US"] = total_score / num_states
+            statescoredic["US"] = round(total_score / num_states, 2)
             dic["nctq_{}".format(year)][policyname] = statescoredic
         
             print(year, nctq_page_url, "read")
