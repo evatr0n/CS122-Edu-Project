@@ -14,7 +14,7 @@ def forward_selection(dat, dependent, n_features, model = LinearRegression(),
     through process of forward selection
 
     Inputs:
-    filepath (str): the path to the csv file containing the data
+    dat (Pandas DataFrame): a Pandas DataFrame housing source data for regression
     dependent (str): the name of the dependent variable
     n_features (int): the number of features to select
     model (function): a linear model.  Defaults to LassoCV()
