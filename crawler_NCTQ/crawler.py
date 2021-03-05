@@ -1,3 +1,8 @@
+# Starting from nctq state comparison homepage, crawls all policy
+# databases and returns a dictionary mapping the year to a pandas 
+# dataframe containing policy info per year. 
+home_url = "https://www.nctq.org/yearbook/home"
+
 import bs4
 import csv
 import urllib3
@@ -23,6 +28,8 @@ def crawl_one_page_nctq(soup, nctq_page_url, dic={}):
         policyname = " (".join([tag.text for tag in policyname]) + ")"
         year = int(re.findall("\((\d+)\)", citation.text)[0]) #get year collected from citation info
         statescoredic = {}
+        total_score = 0
+        num_states = 0
         
         for grade_category in grades_list:  # goes through each grade category and states in each category
             qual_score = grade_category.text
@@ -33,24 +40,29 @@ def crawl_one_page_nctq(soup, nctq_page_url, dic={}):
             states = grade_category.find_all("li")
             for state in states:
                 statescoredic[state.text] = quant_score
+                total_score += quant_score
+                num_states += 1
 
         if not dic.get("nctq_{}".format(year)):
             dic["nctq_{}".format(year)] = {}
         if statescoredic:
+            statescoredic["US"] = total_score / num_states
             dic["nctq_{}".format(year)][policyname] = statescoredic
+        
             print(year, nctq_page_url, "read")
 
     else:
         print(nctq_page_url, "UNABLE TO READ")
 
 
-def crawl_nctq(source_url, csv_file_name):
+def crawl_nctq(source_url=home_url):
     limiting_domain = "nctq.org"
     prefix = "https://www.nctq.org/yearbook/national"
     source_soup = make_soup(source_url)
     url_lst = linked_urls(source_url, source_soup)
     visited_urls = set()
     nctq = {}
+    df_dic = {}
 
     for url in url_lst:
         if util.is_url_ok_to_follow(url, limiting_domain) and \
@@ -60,8 +72,12 @@ def crawl_nctq(source_url, csv_file_name):
                 crawl_one_page_nctq(soup, url, nctq)
         visited_urls.add(url)
 
-    df_dic = {year: pd.DataFrame(data) for year, data in nctq.items()}
+    #df_dic = {year: pd.DataFrame(data) for year, data in nctq.items()}
     
+    for year, data in nctq.items():
+        df_dic[year] = pd.DataFrame(data)
+        df_dic[year].to_csv(year + ".csv")
+        
     #df.to_csv(csv_file_name, sep='\t')
 
     return df_dic
@@ -102,29 +118,7 @@ def make_soup(myurl):
     return soup
 
 
-"""
-def make_soup(url):
-    '''
-    Given a url, return the soup object and request object of this url
 
-    Input: url (a string)
-    Output: the soup object and request object
-    '''
-    request = util.get_request(url)
-    if request:
-        text = util.read_request(request)
-        soup = bs4.BeautifulSoup(text, 'html5lib')
-        
-    return soup, request
-"""      
-
-
-"""
-    with open(index_filename, mode="w") as csvfile:
-        csv_writer = csv.writer(csvfile, delimiter = ",")
-        for key in sorted(statescoredic):
-            csv_writer.writerow([key, statescoredic[key]])
-"""
 
         
 
