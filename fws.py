@@ -24,12 +24,12 @@ def forward_selection(dat, dependent):
     """
     var_order = dict()
     
-    fitted = model.fit(dat, dependent) #model has to be fit to all data first before being 
+    fitted = LinearRegression().fit(dat, dependent) #model has to be fit to all data first before being 
                              #used by SequentialFeatureSelector
 
     forwards = SequentialFeatureSelector(fitted, n_features_to_select = dat.shape[1], #number of independent variables
-                                            scoring = 'r2', 
-                                            direction = 'forward').fit(dat, dependent)
+                                         scoring = 'r2', 
+                                         direction = 'forward').fit(dat, dependent)
     #documentation: https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.SequentialFeatureSelector.html#sklearn.feature_selection.SequentialFeatureSelector.get_params 
 
     
@@ -42,7 +42,7 @@ def forward_selection(dat, dependent):
     X_cut = forwards.transform(dat) 
     
     #The coefficients for each parameter in the linear model
-    finmod = model.fit(X_cut, dependent)
+    finmod = LinearRegression().fit(X_cut, dependent)
     
     for ind, val in enumerate(list(fit_vars)):
         var_order[val] = finmod.coef_[ind]
