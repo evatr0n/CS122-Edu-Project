@@ -1,6 +1,7 @@
 # Starting from nctq state comparison homepage, crawls all policy
 # databases and returns a dictionary mapping the year to a pandas 
 # dataframe containing policy info per year. 
+# To get dataframes, run crawler() in terminal.
 home_url = "https://www.nctq.org/yearbook/home"
 
 import bs4
