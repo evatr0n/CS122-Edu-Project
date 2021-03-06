@@ -146,9 +146,44 @@ things = {"https://nces.ed.gov/programs/digest/d19/tables/dt19_203.90.asp?curren
 "https://nces.ed.gov/programs/digest/d19/tables/dt19_222.60.asp?current=yes":
 [('[Standard errors appear in parentheses]', '2019', '14'), "8th Grade Math Scores"],
 
+"https://nces.ed.gov/programs/digest/d19/tables/dt19_221.72.asp?current=yes":
+[('[Standard errors appear in parentheses]', '8th-grade', 'Total', 'Total', '7'),
+"8th Grade Reading Scores"],
+
 "https://nces.ed.gov/programs/digest/d19/tables/dt19_222.50.asp?current=yes": 
-[('[Standard errors appear in parentheses]', '2019', '13')
-, "4th Grade Math Scores"]}
+[('[Standard errors appear in parentheses]', '2019', '13'),
+"4th Grade Math Scores"], 
+
+"https://nces.ed.gov/programs/digest/d19/tables/dt19_211.30.asp?current=yes":
+[('[Standard errors appear in parentheses]', 'Current dollars', '2017-18',
+ 'Total', 'Total', '9'), "Average Base Teacher Salary w/ Bachelors"],
+
+"https://nces.ed.gov/programs/digest/d19/tables/dt19_211.40.asp?current=yes":
+[('[Standard errors appear in parentheses]', 'Current dollars', '2017-18',
+ 'Total', 'Total', '10'), "Average Base Teacher Salary w/ Masters"],
+
+ "https://nces.ed.gov/programs/digest/d19/tables/dt19_211.60.asp?current=yes":
+ [('Constant 2018-19 dollars1', 'Percentchange,1999-2000to2018-19', '16'), 
+ "% Change in Teacher Salary 1999-2019"],
+
+ "https://nces.ed.gov/programs/digest/d19/tables/dt19_211.60.asp?current=yes":
+ [('Constant 2018-19 dollars1', '2018-19', '15'), "Overall Average Teacher Salary"],
+
+ "https://nces.ed.gov/programs/digest/d20/tables/dt20_213.40.asp?current=yes":
+ [('[In full-time equivalents]', 'Fall 2018', 'Teachers as a percent of staff',
+ 'Teachers as a percent of staff', 'Teachers as a percent of staff',
+ 'Teachers as a percent of staff', '17'), "Teacher Percentage of School Staff"],
+
+"https://nces.ed.gov/programs/digest/d19/tables/dt19_214.30.asp?current=yes":
+[('Total agencies', 'Total agencies', '2017-18', '3'), "Number of Education Agencies"],
+
+"https://nces.ed.gov/programs/digest/d20/tables/dt20_216.90.asp?current=yes":
+[('Charter schools as a percent of total public schools', '2017-18', '15'),
+"% of Public Schools That Are Charters"],
+
+"https://nces.ed.gov/programs/digest/d19/tables/dt19_219.46.asp?current=yes":
+[('Total, ACGR for all students', '2017-18', '2017-18', '2017-18', '9'), 
+"Adjusted Cohort Graduation Rate"]}
 
 dfs = []
 for thing1, thing2 in things.items():
@@ -165,6 +200,7 @@ for i in range(1, len(dfs)):
         final = first_frame.join(dfs[i])
     else:
         final = final.join(dfs[i])
+
 
 
 
