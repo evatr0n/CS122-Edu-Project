@@ -3,43 +3,18 @@ import bs4
 import pandas as pd
 import numpy as np
 import re
+from sklearn import preprocessing 
 
 # FOR GROUPMATES
-# You don't really need to know how this code works. The only thing that matters
-# for your purposes is that if you import this file into another python file,
-# the command "nces.final" will produce the table that we ultimately care about.
-# I'm gonna clean up a lot of this and get rid of unncessary things soon/ add
-# more tables before pushing this again.
+# nces.final produces the table with the raw data. nces.filled is the same frame
+# but with all nan values filled in and money values ('$69,420') converted to
+# strings ('69420') that pandas can automatically convert to ints. 
 
 
 
 not_states = ['Other jurisdictions', 'American Samoa', 'Guam',
-'Northern Marianas', 'Puerto Rico', 'U.S. Virgin Islands', 'Department of Defense Education Activity (DoDEA)']
-
-
-
-states = [['United States'], ['Alabama'],['Alaska'], ['Arizona'],['Arkansas'],['California'], ['Colorado'],
-['Connecticut'], ['Delaware'], ['District of Columbia'], ['Florida'],['Georgia'],
-['Hawaii'], ['Idaho'], ['Illinois'], ['Indiana'], ['Iowa'], ['Kansas'], ['Kentucky'],
-['Louisiana'], ['Maine'], ['Maryland'], ['Massachusetts'], ['Michigan'],
-['Minnesota'], ['Mississippi'], ['Missouri'], ['Montana'], ['Nebraska'], ['Nevada'],
-['New Hampshire'], ['New Jersey'], ['New Mexico'], ['New York'], ['North Carolina'],
-['North Dakota'], ['Ohio'], ['Oklahoma'], ['Oregon'], ['Pennsylvania'], ['Rhode Island'],
-['South Carolina'], ['South Dakota'], ['Tennessee'], ['Texas'], ['Utah'], ['Vermont'],
-['Virginia'], ['Washington'], ['West Virginia'], ['Wisconsin'], ['Wyoming']]
-
-states2 = []
-
-for i in range(len(states)):
-    states2.append(states[i][0])
-
-
-{"https://nces.ed.gov/programs/digest/d19/tables/dt19_219.35.asp?current=yes" : ["124378", "Average Freshman Graduation Rate"],
-"https://nces.ed.gov/programs/digest/d19/tables/dt19_221.40.asp?current=yes": ["1243567", "4th Grade Reading Scores"],
-"https://nces.ed.gov/programs/digest/d19/tables/dt19_219.85b.asp?current=yes": ["125749A", "Percentage of HS Drop Outs Age 16-24"],
-"https://nces.ed.gov/programs/digest/d19/tables/dt19_222.60.asp?current=yes": ["1243567", "8th Grade Math Scores"],
-"https://nces.ed.gov/programs/digest/d19/tables/dt19_222.50.asp?current=yes": ["1243567", "4th Grade Math Scores"]
-}
+'Northern Marianas', 'Puerto Rico', 'U.S. Virgin Islands', 
+'Department of Defense Education Activity (DoDEA)']
 
 
 #1
@@ -112,16 +87,18 @@ def remove_repeat(df):
     df.columns = new_cols
     new = df[[df.columns[0]]].copy()
     return new
+
+
+
     
 
 
 
-things = {"https://nces.ed.gov/programs/digest/d19/tables/dt19_203.90.asp?current=yes" :
+data = {"https://nces.ed.gov/programs/digest/d19/tables/dt19_203.90.asp?current=yes" :
 [('[Standard errors appear in parentheses]',
  '2011-12',
  'Total elementary, secondary, and combined elementary/secondary schools',
- 'ADA as percent of enrollment',
- '4'), "Average Daily Attendance %"],
+ 'ADA as percent of enrollment','4'), "Average Daily Attendance %"],
 
 "https://nces.ed.gov/programs/digest/d19/tables/dt19_204.75c.asp?current=yes":
 [('Homeless students as percent of total public school enrollment',
@@ -186,7 +163,7 @@ things = {"https://nces.ed.gov/programs/digest/d19/tables/dt19_203.90.asp?curren
 "Adjusted Cohort Graduation Rate"]}
 
 dfs = []
-for thing1, thing2 in things.items():
+for thing1, thing2 in data.items():
     df = grab_frame(thing1)
     df = set_index(df)
     df = remove_footnotes(df)
@@ -201,6 +178,102 @@ for i in range(1, len(dfs)):
     else:
         final = final.join(dfs[i])
 
+def remove_dollar(df):
+    dol_cols = ['Average Base Teacher Salary w/ Bachelors',
+    'Average Base Teacher Salary w/ Masters',
+    'Overall Average Teacher Salary']
+
+    for col in dol_cols:
+        df[col] = df[col].str.replace(r"[$,]", '')
+    return df
+
+final = remove_dollar(final)
+
+
+us_state_abbrev = {
+    'Alabama': 'AL',
+    'Alaska': 'AK',
+    'American Samoa': 'AS',
+    'Arizona': 'AZ',
+    'Arkansas': 'AR',
+    'California': 'CA',
+    'Colorado': 'CO',
+    'Connecticut': 'CT',
+    'Delaware': 'DE',
+    'District of Columbia': 'DC',
+    'Florida': 'FL',
+    'Georgia': 'GA',
+    'Guam': 'GU',
+    'Hawaii': 'HI',
+    'Idaho': 'ID',
+    'Illinois': 'IL',
+    'Indiana': 'IN',
+    'Iowa': 'IA',
+    'Kansas': 'KS',
+    'Kentucky': 'KY',
+    'Louisiana': 'LA',
+    'Maine': 'ME',
+    'Maryland': 'MD',
+    'Massachusetts': 'MA',
+    'Michigan': 'MI',
+    'Minnesota': 'MN',
+    'Mississippi': 'MS',
+    'Missouri': 'MO',
+    'Montana': 'MT',
+    'Nebraska': 'NE',
+    'Nevada': 'NV',
+    'New Hampshire': 'NH',
+    'New Jersey': 'NJ',
+    'New Mexico': 'NM',
+    'New York': 'NY',
+    'North Carolina': 'NC',
+    'North Dakota': 'ND',
+    'Northern Mariana Islands':'MP',
+    'Ohio': 'OH',
+    'Oklahoma': 'OK',
+    'Oregon': 'OR',
+    'Pennsylvania': 'PA',
+    'Puerto Rico': 'PR',
+    'Rhode Island': 'RI',
+    'South Carolina': 'SC',
+    'South Dakota': 'SD',
+    'Tennessee': 'TN',
+    'Texas': 'TX',
+    'Utah': 'UT',
+    'Vermont': 'VT',
+    'Virgin Islands': 'VI',
+    'Virginia': 'VA',
+    'Washington': 'WA',
+    'West Virginia': 'WV',
+    'Wisconsin': 'WI',
+    'Wyoming': 'WY',
+    'United States': 'US'
+}
+final.rename(index=us_state_abbrev, inplace=True)
+
+
+
+def replace_na(df):
+    df = df.fillna(0)
+    df = df.replace({'‡': 0, "#": 0})
+    for col in df.columns:
+        df[col].replace({0: df[col][0]}, inplace=True)
+    return df
+
+
+
+
+filled = replace_na(final)
+
+
+
+
+def normalize(df):
+    x = df.values
+    min_max_scaler = preprocessing.MinMaxScaler()
+    x_scaled = min_max_scaler.fit_transform(x)
+    df = pd.DataFrame(x_scaled)
+    return df
 
 
 
