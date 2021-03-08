@@ -11,8 +11,8 @@ import certifi
 import util
 import queue
 import re
+import numpy as np
 import pandas as pd
-import numbers
 
 
 
@@ -27,28 +27,22 @@ def crawl_one_page_nctq(soup, nctq_page_url, dic={}):
     citation = soup.find("div", class_ = "suggestedCitation")
 
     if grades_list and citation:
+        year = int(re.findall("\((\d+)\)", citation.text)[0]) # get year collected from citation info
         policyname = " (".join([tag.text for tag in policyname]) + ")"
-        policyname = " ".join(policyname.split())  # treats for inconsistent spacing
-        year = int(re.findall("\((\d+)\)", citation.text)[0]) #get year collected from citation info
-        statescoredic = {}
-        total_score = 0
-        num_states = 0
+        dic[policyname] = dic.get(policyname, {})  # get preexisting policy category or initialize to empty dictionary
         
         for grade_category in grades_list:  # goes through each grade category and states in each category
-            qual_score = grade_category.text
-            quant_score = grade_to_score_map.get(qual_score)
+            quant_score = grade_to_score_map.get(grade_category.text)
             while grade_category.name != "ul":
                 grade_category = grade_category.next_sibling
-            
             states = grade_category.find_all("li")
-            for state in states:
-                statescoredic[state.text] = quant_score
-                total_score += quant_score
-                num_states += 1
 
-        dic["nctq_{}".format(year)] = dic.get("nctq_{}".format(year), {})
-        statescoredic["US"] = round(total_score / num_states, 2)
-        dic["nctq_{}".format(year)][policyname] = statescoredic 
+            for state in states:
+                dic[policyname][state.text] = dic[policyname].get(state.text, np.array([0, 0]))\
+                                              + np.array([quant_score, 1])
+        if not dic[policyname]:
+            del dic[policyname]
+        
         print(year, nctq_page_url, "read")
 
     else:
@@ -72,58 +66,17 @@ def crawl_nctq(source_url=home_url):
                 crawl_one_page_nctq(soup, url, nctq)
         visited_urls.add(url)
 
+    nctq_df = pd.DataFrame(nctq)
+    nctq_df.to_csv("testing_average.csv")
     #df_dic = {year: pd.DataFrame(data) for year, data in nctq.items()}
     
-    for year, data in nctq.items():
-        df_dic[year] = pd.DataFrame(data)
-        df_dic[year].to_csv(year + ".csv")
+    #for year, data in nctq.items():
+    #    df_dic[year] = pd.DataFrame(data)
+    #    df_dic[year].to_csv(year + ".csv")
         
     #df.to_csv(csv_file_name, sep='\t')
 
-    return df_dic   
-
-
-def fill_na(df_dic):
-    '''
-    Takes pandas dataframe mapping years to policy scores and returns 
-    a copy of the dataframe with its NaN values filled in with the 
-    US average. By copying, it preserves the original dataframe. 
-    Use this when conducting calculations with nonaveraged policy score 
-    data by year. 
-    Inputs:
-      df_dic: pandas dataframe produced by crawl_nctq
-    Outputs:
-      dfdic_filled: dictionary mapping years("nctq_{year}") to dataframes with
-                    filled NaN values. 
-    '''
-    dfdic_filled = {}
-    for key, value in df_dic.items():
-        dfdic_filled[key] = value.copy()
-        dfdic_filled[key].fillna(dfdic_filled[key].loc["US"], inplace=True)
-    
-    return dfdic_filled
-
-
-def average_df(dfdic_filled):
-    '''
-    Takes output of fill_na, a pandas dataframe with all NaN values filled,
-    and computes one dataframe where policyscores are averaged over the 
-    years. Many of the NCTQ data for policy has data from different years, 
-    and these data points will be averaged to show mid to long term 
-    policy performance per state. 
-    Inputs:
-      dfdic_filled: pd dataframe, no NaN
-    Outputs:
-      df_average = one dataframe with average scores per policy category.
-                   used for default computation. 
-    '''
-
-    df_average = pd.concat([value for value in dfdic_filled.values()], axis = 1)
-    df_average = df_average.groupby(by=df_average.columns, axis=1)
-    df_average = df_average.apply(lambda g: g.mean(axis=1) \
-                 if isinstance(g.iloc[0,0], numbers.Number) else g.iloc[:,0])
-    
-    return df_average
+    return nctq_df
 
 
 def linked_urls(source_url, soup):
