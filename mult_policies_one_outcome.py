@@ -5,6 +5,12 @@ import pandas as pd
 
 def calculate_mult_pol(avg_nctq_df, NCES_df, policies_list, outcome_var):
     """
+    Handles the computation for a user who wants to compare 1 outcome with a range of policies (no fws)
+    Inputs:
+        avg_nctq_df: df output of NCTQ crawler
+        NCES_df: df output of nces crawler
+        policies_list = list of policy headers the user input
+        outcome_var: name of the outcome variable header the user input
     Returns:
         correlation matrix dictionary: {policy: correlation value between policy and outcome variable}
         OR (havent decided)
