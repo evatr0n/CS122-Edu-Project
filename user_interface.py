@@ -41,14 +41,14 @@ master_frame.pack()
 
 ### Creating 3 frames for master_frame: intro, user input option 1, user input option 2 ###
 
-welcome_frame = tk.Frame(master_frame, bg = "blue")
+welcome_frame = tk.Frame(master_frame, bg = "pink")
 #welcome_frame.pack(side="top", fill="both", expand=True)
 welcome_frame.grid(column = 0, row = 0)
 #welcome_frame.grid_columnconfigure(0, weight=1)
-default_opt_frame = tk.Frame(master_frame, bg = "green")
+default_opt_frame = tk.Frame(master_frame, bg = "dark blue")
 default_opt_frame.grid(column = 0, row = 1)
 #default_opt_frame.grid_columnconfigure(0, weight=1)
-special_opt_frame = tk.Frame(master_frame, bg = "pink")
+special_opt_frame = tk.Frame(master_frame, bg = "green")
 special_opt_frame.grid(column = 0, row = 2)
 
 ### Enter text data for top frame ###
