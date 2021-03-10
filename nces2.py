@@ -153,10 +153,9 @@ def remove_repeat(df):
     return new
 
 def replace_na(df):
-    df = df.fillna(0)
-    df = df.replace({'‡': 0, "#": 0, "—": 0, "---": 0})
-    for col in df.columns:
-        df[col].replace({0: df[col][0]}, inplace=True)
+
+    df = df.replace({'‡': None, "#": None, "—": None, "---": None})
+    df = df.fillna(df.iloc[0])
     return df
 
 def remove_dollar(df):
@@ -336,12 +335,13 @@ us_state_abbrev = {
     'United States': 'US'
 }
 final.rename(index=us_state_abbrev, inplace=True)
+final.fillna(final.mean(), inplace=True)
 
 
-outfile = "/home/jrgill/Desktop/cmsc12200-win-21-jrgill/Project/place"
-y = "final.csv"
+#outfile = "/home/jrgill/Desktop/cmsc12200-win-21-jrgill/Project/place"
+#y = "final.csv"
 
-final.to_csv(os.path.join(outfile, y))
+final.to_csv("csv/nces_final.csv")
 
 
 
