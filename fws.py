@@ -28,10 +28,13 @@ def forward_selection(dat, dependent):
         X_cut = dat #since all columns of dat are used
     
     else:
-        fitted = LinearRegression().fit(dat, dependent) #model has to be fit to all data first before being 
+        fitted = LinearRegression(fit_intercept=False).fit(dat, dependent) #model has to be fit to all data first before being 
                                                         #used by SequentialFeatureSelector
+                                                        # we will be using trend data which, when all independent variables are 
+                                                        # at their mean values(since they are centralized) will likely be 0, or 
+                                                        # constant without variation. This means we can safely assume intercept = 0.
 
-        forwards = SequentialFeatureSelector(fitted, n_features_to_select = dat.shape[1], #number of independent variables
+        forwards = SequentialFeatureSelector(fitted, n_features_to_select = dat.shape[1] - 1, #number of independent variables
                                              scoring = 'r2', 
                                              direction = 'forward').fit(dat, dependent)
     
