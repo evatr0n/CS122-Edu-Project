@@ -1,6 +1,7 @@
 # File for tkinter User Interface
 import tkinter as tk
 from tkinter import ttk
+from ui_util import VerticalScrolledFrame
 
 def retrieve1():
     states = [state_listbox.get(idx) for idx in state_listbox.curselection()]
@@ -28,17 +29,26 @@ root.title("CS122 TJJE Project: Examining State Policies and Educational Outcome
 # yscroll.grid(row=0, column=1, sticky='ns')
 # root.configure(yscrollcommand=yscroll.set)
 
+### Creating main frame that holds a vertical scrollbar
+master_frame = VerticalScrolledFrame(
+    root, 
+    bg="white",
+    cursor="arrow",
+    height= screen_height,
+    width=screen_width
+    )
+master_frame.pack()
 
-### Creating 3 frames for root: intro, user input option 1, user input option 2 ###
+### Creating 3 frames for master_frame: intro, user input option 1, user input option 2 ###
 
-welcome_frame = tk.Frame(root, bg = "blue")
+welcome_frame = tk.Frame(master_frame, bg = "blue")
 #welcome_frame.pack(side="top", fill="both", expand=True)
 welcome_frame.grid(column = 0, row = 0)
 #welcome_frame.grid_columnconfigure(0, weight=1)
-default_opt_frame = tk.Frame(root, bg = "green")
+default_opt_frame = tk.Frame(master_frame, bg = "green")
 default_opt_frame.grid(column = 0, row = 1)
 #default_opt_frame.grid_columnconfigure(0, weight=1)
-special_opt_frame = tk.Frame(root, bg = "pink")
+special_opt_frame = tk.Frame(master_frame, bg = "pink")
 special_opt_frame.grid(column = 0, row = 2)
 
 ### Enter text data for top frame ###
