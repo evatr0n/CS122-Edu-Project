@@ -5,11 +5,17 @@ from ui_util import VerticalScrolledFrame
 
 def retrieve1():
     states = [state_listbox.get(idx) for idx in state_listbox.curselection()]
-    outcomes = [outcomes_listbox.get(idx) for idx in outcomes_listbox.curselection()]
+    #outcomes = [outcomes_listbox.get(idx) for idx in outcomes_listbox.curselection()]
+    print("states" + str(states))
+    #print("outcomes" + str(outcomes))
+
+def retrieve2():
+    states = [state2_listbox.get(idx) for idx in state2_listbox.curselection()]
+    outcomes = [outcomes2_listbox.get(idx) for idx in outcomes2_listbox.curselection()]
     print("states" + str(states))
     print("outcomes" + str(outcomes))
 
-def retrieve2():
+def retrieve3():
     outcome = outcomes_combobox.get()
     policies = [policies_listbox.get(idx) for idx in policies_listbox.curselection()]
     print("outcome: " + str(outcome))
@@ -48,8 +54,10 @@ welcome_frame.grid(column = 0, row = 0)
 default_opt_frame = tk.Frame(master_frame, bg = "dark blue")
 default_opt_frame.grid(column = 0, row = 1)
 #default_opt_frame.grid_columnconfigure(0, weight=1)
+fws_nondefault_frame = tk.Frame(master_frame, bg = "purple")
+fws_nondefault_frame.grid(column = 0, row = 2)
 special_opt_frame = tk.Frame(master_frame, bg = "green")
-special_opt_frame.grid(column = 0, row = 2)
+special_opt_frame.grid(column = 0, row = 3)
 
 ### Enter text data for top frame ###
 
@@ -64,7 +72,7 @@ welcome_text_box.insert(tk.END, intro + "\n"*2 + sources + "\n"*2 + note)
 welcome_text_box.configure(state='disabled')
 
 ### Enter widgets for default user input frame ###
-option1_label = ttk.Label(default_opt_frame, text = "Retrieve information on how effective a state's relevant policies are for all or particulr educational outcomes: ").grid(column = 0,  
+option1_label = ttk.Label(default_opt_frame, text = "Option 1 Retrieve information on how effective a state's relevant policies are for all or particulr educational outcomes: ").grid(column = 0,  
         row = 0, padx = 35, pady = 25)
 
 # State Selection Label
@@ -95,6 +103,7 @@ for each_item in range(len(states)):
 
 ### outcomes selection listbox widget ###
 # outcomes Selection Label
+"""
 outcomes_label = ttk.Label(default_opt_frame, text = "Select the outcomes you want to investigate:").grid(column = 1,  
         row = 1, padx = 35, pady = 25) 
 
@@ -118,9 +127,64 @@ for each_item in range(len(outcomes)):
       
     outcomes_listbox.insert(tk.END, outcomes[each_item]) 
     outcomes_listbox.itemconfig(each_item, bg = "light blue")
+    """
 
 button = tk.Button(default_opt_frame, text="Calculate!", bd = "5", command=retrieve1)
 button.grid(column = 3, row = 2)
+
+
+
+### fws non default user option frame widgets ###
+option2_label = ttk.Label(fws_nondefault_frame, text = "Option 2 Retrieve information on how effective a state's relevant policies are for all or particulr educational outcomes: ").grid(column = 0,  
+        row = 0, padx = 35, pady = 25)
+
+# State Selection Label
+state2_label = ttk.Label(fws_nondefault_frame, text = "Select one state, or select multiple to compare").grid(column = 0,  
+        row = 1, padx = 35, pady = 25) 
+
+# State Selection listbox widget
+state2_listbox = tk.Listbox(fws_nondefault_frame, selectmode = "multiple", exportselection = False, width=20, height=10)
+state2_listbox.grid(column = 0, row = 2)
+
+state2_scrollbar = tk.Scrollbar(state_listbox, orient="vertical")
+state2_scrollbar.config(command=state_listbox.yview)
+#scrollbar.pack(side="right", fill="y")
+
+state2_listbox.config(yscrollcommand=state_scrollbar.set)
+
+for each_item in range(len(states)): 
+      
+    state2_listbox.insert(tk.END, states[each_item]) 
+    state2_listbox.itemconfig(each_item, bg = "light blue") 
+
+### outcomes selection listbox widget ###
+# outcomes Selection Label
+outcomes2_label = ttk.Label(fws_nondefault_frame, text = "Select the outcomes you want to investigate:").grid(column = 1,  
+        row = 1, padx = 35, pady = 25) 
+
+# outcomes Selection listbox widget
+outcomes2_listbox = tk.Listbox(fws_nondefault_frame, selectmode = "multiple", exportselection = False, width=20, height=10)
+outcomes2_listbox.grid(column = 1, row = 2)
+
+outcomes2_scrollbar = tk.Scrollbar(outcomes2_listbox, orient="vertical")
+outcomes2_scrollbar.config(command=outcomes2_listbox.yview)
+#scrollbar.pack(side="right", fill="y")
+
+outcomes2_listbox.config(yscrollcommand=outcomes2_scrollbar.set)
+
+outcomes = ["Select all trend outcomes", "trend outcome1", "trend outcome2", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA", 
+          "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", 
+          "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", 
+          "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", 
+          "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+
+for each_item in range(len(outcomes)): 
+      
+    outcomes2_listbox.insert(tk.END, outcomes[each_item]) 
+    outcomes2_listbox.itemconfig(each_item, bg = "light blue")
+
+button = tk.Button(fws_nondefault_frame, text="Calculate!", bd = "5", command=retrieve2)
+button.grid(column = 2, row = 2)
 
 ### Enter widgets for special user input frame ###
 option2_label = ttk.Label(special_opt_frame, text = "Retrieve information on how particular policies interact with a given outcome: ").grid(column = 0,  
@@ -161,7 +225,7 @@ for each_item in range(len(policies)):
     policies_listbox.insert(tk.END, policies[each_item]) 
     policies_listbox.itemconfig(each_item, bg = "light blue")
 
-button2 = tk.Button(special_opt_frame, text="Calculate!", bd = "5", command=retrieve2)
+button2 = tk.Button(special_opt_frame, text="Calculate!", bd = "5", command=retrieve3)
 button2.grid(column = 2, row = 2)
 
 root.mainloop()
