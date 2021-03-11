@@ -355,7 +355,7 @@ final.fillna(final.mean(), inplace=True)
 # y = "final.csv"
 
 
-# final.to_csv(os.path.join(outfile, y))
+final.to_csv("csv/nces_final.csv")
 
 
 
