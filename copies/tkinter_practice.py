@@ -121,10 +121,11 @@ class Window1:
       
             self.outcomes2_listbox.insert(tk.END, outcome) 
             self.outcomes2_listbox.itemconfig(i, bg = "deep sky blue")
-"""
+    
     def special_opt_frame(self):
         special_opt_frame = tk.Frame(self.frame, bg = "green")
         special_opt_frame.grid(column = 0, row = 3)
+    """
         # Label 
         option3_label = ttk.Label(special_opt_frame, text = "Option 3 Retrieve information on how effective a state's relevant policies are for all or particulr educational outcomes: ").grid(column = 0,  
         row = 0, padx = 35, pady = 25)
@@ -164,7 +165,7 @@ class Window1:
       
             self.outcomes3_listbox.insert(tk.END, outcome) 
             self.outcomes3_listbox.itemconfig(i, bg = "deep sky blue")
-"""
+    """
     def scrollbar(self):
         scrollbar = tk.Scrollbar(self.frame)
         return scrollbar
