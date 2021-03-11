@@ -44,10 +44,13 @@ def default_calc(average_nctq, centered_average_nctq, NCES_df, R2, block_negativ
     # list of the output dictionaries, 1 dict per outcome
     all_fws_regressions_dict = {}
     policy_weight_dic = {}
+    states_list = list(NCES_df.index)
+    state_to_policy_effectiveness_score = {state: {} for state in states_list}
+    # {state: {policy: weight}}
 
     for outcome in outcomes:
         dependent = NCES_df[outcome]
-        dat = centered_average_nctq[basic_regression.cutoff_R2(centered_average_nctq, dependent, R2, block_negative)]
+        dat = centered_average_nctq[basic_regression.cutoff_R2(centered_average_nctq, dependent, R2, False)]
         
         if not dat.empty: # make sure dat is nonempty and run fws. 
 
@@ -60,20 +63,16 @@ def default_calc(average_nctq, centered_average_nctq, NCES_df, R2, block_negativ
             max_b = max([abs(x[1]) for x in policy_coef])
             denom = math.floor(math.log(max_b, 10))
             for policy, coef in policy_coef:
-                policy_weight_dic[policy] = policy_weight_dic.get(policy, 0) + \
-                                            ((coef / (10 ** denom)) * reg_eq_from_outcome["Model Score (r2)"])
+                weight = (coef / (10 ** denom)) * reg_eq_from_outcome["Model Score (r2)"]
+                policy_weight_dic[policy] = policy_weight_dic.get(policy, 0) + weight
                 # since for all outcome variables in the trend data, the intercept is 0 (explained in fws),
                 # moving the decimal point an equal number of places in coefficients presents no substantive 
                 # change to direction and magnitude of marginal effect while making coefficients from 
                 # different linear models with differing parameters directly comparable to each other
-
-    states_list = list(NCES_df.index)
-    # {state: {policy: effectiveness_score}}
-    state_to_policy_effectiveness_score = {state: {} for state in states_list} # initialize dictionary
-    for state in states_list:
-        for policy, weight in policy_weight_dic.items():
-            effectiveness_score = weight * average_nctq.loc[state, policy] # policy grade for state
-            state_to_policy_effectiveness_score[state][policy] = effectiveness_score
+                for state in states_list:
+                    if not (block_negative and coef < 0 and dat.loc[state, policy] >= dat.loc["US", policy]):  # if block is on and state performance is higher than US average but the policy is negative, do not include in weight for state.
+                        state_to_policy_effectiveness_score[state][policy] = state_to_policy_effectiveness_score[state].get(policy, 0) + \
+                                                                            weight * average_nctq.loc[state, policy]
 
     # add all the effectiveness scores together for each state to get the overall_effectiveness_score
     # dict with keys = state, values = overall_effectiveness score
@@ -99,3 +98,7 @@ def get_scores(states_overall_effectiveness_score, state_to_policy_effectiveness
     worst_policy = min(policy_to_eff.items(), key=lambda tup: tup[1])[0]
 
     return score, best_policy, worst_policy
+
+
+# copies version severely underestimates US average, while the not copies version 
+# underestimates MA and other ostensibly high ranking states. 

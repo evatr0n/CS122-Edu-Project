@@ -41,17 +41,22 @@ def run_regression(independent_df, dependent_df, trend=False):
 #tester_df = pd.concat([dfdic["nctq_20{}".format(year)] for year in range(18, 22)], axis = 1)
 
 
-def cutoff_R2(avg_nctq_df, dependent_df, R2, trend=False):
+def cutoff_R2(avg_nctq_df, dependent_df, R2, block_negative=False, trend=False):
     policyr2 = []
     #testing=[]
-    for i, policy in enumerate(avg_nctq_df.columns):
+    for policy in avg_nctq_df.columns:
         X = avg_nctq_df[policy]
         y = dependent_df
         regression = run_regression(X, y, trend) 
         r2 = regression.loc["R2", "values"]
-        if r2 > R2:
-            intercept = regression.loc["Intercept", "values"]
-            policyr2.append(policy)
+        coef = regression.loc[policy, "values"]
+        if block_negative:
+            if (coef < 0 and r2 > max(R2, 0.3)) or (coef >= 0 and r2 > R2):
+                policyr2.append(policy)
+        else:
+            if r2 > R2:
+                intercept = regression.loc["Intercept", "values"]
+                policyr2.append(policy)
             #testing.append((policy, "intercept: {}".format{intercept}, "R2: {}".format{r2}))
     #sorted(policyr2, key=lambda tup:tup[2])
 
