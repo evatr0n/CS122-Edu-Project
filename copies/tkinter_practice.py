@@ -8,7 +8,8 @@ import tkinter as tk
 
 from tkinter import ttk
 import pandas as pd
-nces_final = pd.read_csv("csv/nces_final.csv")
+nces_final = pd.read_csv("csv/nces_final.csv", index_col = 0)
+nces_trends = nces_final[[col for col in nces_final.columns if col.startswith("Trend")]]
 
 
 from ui_util import VerticalScrolledFrame
@@ -21,6 +22,7 @@ states = ["US", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA"
           "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
 
 outcomes = list(nces_final.columns)
+trend_outcomes = list(nces_trends.columns)
 
 class Window1:
     def __init__(self, root):
@@ -83,7 +85,7 @@ class Window1:
         fws_nondefault_frame = tk.Frame(self.frame, bg = "purple")
         fws_nondefault_frame.grid(column = 0, row = 2)
         # Label 
-        option2_label = ttk.Label(fws_nondefault_frame, text = "Option 2 Retrieve information on how effective a state's relevant policies are for all or particulr educational outcomes: ").grid(column = 0,  
+        option2_label = ttk.Label(fws_nondefault_frame, text = "Option 2: Recalculate state scores by specifying particular outcome variables").grid(column = 0,  
         row = 0, padx = 35, pady = 25)
 
         # List box widget
@@ -105,7 +107,7 @@ class Window1:
         outcomes2_label = ttk.Label(fws_nondefault_frame, text = "Select the outcomes you want to investigate:").grid(column = 1,  
         row = 1, padx = 35, pady = 25) 
         # outcomes Selection listbox widget
-        self.outcomes2_listbox = tk.Listbox(fws_nondefault_frame, selectmode = "multiple", exportselection = False, width=20, height=10)
+        self.outcomes2_listbox = tk.Listbox(fws_nondefault_frame, selectmode = "multiple", exportselection = False, width=35, height=10)
         self.outcomes2_listbox.grid(column = 1, row = 2)
         # Adding scrollbar to listbox
         outcomes2_scrollbar = tk.Scrollbar(fws_nondefault_frame)
@@ -115,57 +117,58 @@ class Window1:
 
         # Adding calculate button widget 
         button = tk.Button(fws_nondefault_frame, text="Calculate!", bd = "5", command=self.retrieve2)
-        button.grid(column = 2, row = 2)
+        button.grid(column = 3, row = 2)
 
-        for i, outcome in enumerate(outcomes): 
-      
+        for i, outcome in enumerate(trend_outcomes): 
+    
             self.outcomes2_listbox.insert(tk.END, outcome) 
             self.outcomes2_listbox.itemconfig(i, bg = "deep sky blue")
     
     def special_opt_frame(self):
         special_opt_frame = tk.Frame(self.frame, bg = "green")
         special_opt_frame.grid(column = 0, row = 3)
-    """
         # Label 
-        option3_label = ttk.Label(special_opt_frame, text = "Option 3 Retrieve information on how effective a state's relevant policies are for all or particulr educational outcomes: ").grid(column = 0,  
+        option3_label = ttk.Label(special_opt_frame, text = "Retrieve information on how particular policies interact with a given outcome: ").grid(column = 0,  
         row = 0, padx = 35, pady = 25)
 
-        # List box widget
-        self.state3_listbox = tk.Listbox(special_opt_frame, selectmode = "multiple", exportselection = False, width=20, height=10)
-        self.state3_listbox.grid(column = 0, row = 3)
+        ttk.Label(special_opt_frame, text = "Select one outcome to investigate:").grid(column = 0,  
+                row = 1, padx = 35, pady = 25)
+        outcome_combo = tk.StringVar() 
+        self.outcomes_combobox = ttk.Combobox(special_opt_frame, width = 27,  
+                                    textvariable = outcome_combo, exportselection=0)
+        self.outcomes_combobox['values'] = outcomes 
+        self.outcomes_combobox.grid(column = 0, row = 2) 
+
+        # policies selection label
+        policies_label = ttk.Label(special_opt_frame, text = "Select which policies to consider:").grid(column = 1,  
+                row = 1, padx = 35, pady = 25) 
+
+        # policies Selection listbox widget
+        self.policies3_listbox = tk.Listbox(special_opt_frame, selectmode = "multiple", exportselection = False, width=35, height=10)
+        self.policies3_listbox.grid(column = 1, row = 2)
+
         # Adding scrollbar to listbox
-        state_scrollbar = tk.Scrollbar(special_opt_frame)
-        state_scrollbar.config(command=self.state3_listbox.yview)
-        self.state3_listbox.config(yscrollcommand=state_scrollbar.set)
-        state_scrollbar.grid(column=1, row=2, sticky='NSW')
+        policies3_scrollbar = tk.Scrollbar(special_opt_frame)
+        policies3_scrollbar.config(command=self.policies3_listbox.yview)
+        self.policies3_listbox.config(yscrollcommand=policies3_scrollbar.set)
+        policies3_scrollbar.grid(column=2, row=2, sticky='NSW')
 
-        # Populating scrollbar
-        for i, state in enumerate(states): 
-    
-            self.state3_listbox.insert(tk.END, state) 
-            self.state3_listbox.itemconfig(i, bg = "deep sky blue")
-
-        ## Outcomes selection listbox widget
-        outcomes3_label = ttk.Label(special_opt_frame, text = "Select the outcomes you want to investigate:").grid(column = 1,  
-        row = 1, padx = 35, pady = 25) 
-        # outcomes Selection listbox widget
-        self.outcomes3_listbox = tk.Listbox(special_opt_frame, selectmode = "multiple", exportselection = False, width=20, height=10)
-        self.outcomes3_listbox.grid(column = 1, row = 2)
         # Adding scrollbar to listbox
-        outcomes3_scrollbar = tk.Scrollbar(special_opt_frame)
-        outcomes3_scrollbar.config(command=self.outcomes3_listbox.yview)
-        self.outcomes3_listbox.config(yscrollcommand=special_opt_frame.set)
-        outcomes3_scrollbar.grid(column=2, row=2, sticky='NSW')
+        policies3_scrollbarh = tk.Scrollbar(special_opt_frame)
+        policies3_scrollbarh.config(command=self.policies3_listbox.xview)
+        self.policies3_listbox.config(xscrollcommand=policies3_scrollbarh.set)
+        policies3_scrollbarh.grid(column=1, row=3, sticky='WE')
 
-        # Adding calculate button widget 
+         # Adding calculate button widget 
         button = tk.Button(special_opt_frame, text="Calculate!", bd = "5", command=self.retrieve3)
-        button.grid(column = 2, row = 2)
+        button.grid(column = 3, row = 2)
 
         for i, outcome in enumerate(outcomes): 
       
-            self.outcomes3_listbox.insert(tk.END, outcome) 
-            self.outcomes3_listbox.itemconfig(i, bg = "deep sky blue")
-    """
+            self.policies3_listbox.insert(tk.END, outcome) 
+            self.policies3_listbox.itemconfig(i, bg = "deep sky blue") 
+        
+
     def scrollbar(self):
         scrollbar = tk.Scrollbar(self.frame)
         return scrollbar
@@ -185,11 +188,12 @@ class Window1:
         print("outcomes" + str(outcomes))
         self.new_window2(states, outcomes)
 
-    def retrieve3(self, outcomes_combobox, policies_listbox):
-        outcome = outcomes_combobox.get()
-        policies = [policies_listbox.get(idx) for idx in policies_listbox.curselection()]
+    def retrieve3(self):
+        outcome = self.outcomes_combobox.get()
+        policies = [self.policies3_listbox.get(idx) for idx in self.policies3_listbox.curselection()]
         print("outcome: " + str(outcome))
         print("policies" + str(policies))
+        self.new_window3(outcome, policies)
     
     def new_window1(self, states):
         self.newWindow1 = tk.Toplevel(self.frame)
@@ -198,6 +202,10 @@ class Window1:
     def new_window2(self, states, outcomes):
         self.newWindow2 = tk.Toplevel(self.frame)
         self.output2 = Output2(self.newWindow2, states, outcomes)
+
+    def new_window3(self, outcome, policies):
+        self.newWindow3 = tk.Toplevel(self.frame)
+        self.output3 = Output3(self.newWindow3, outcome, policies)
 
 
 
@@ -255,6 +263,39 @@ class Output2:
         outcome_text.grid(column = 1, row = 1)
         outcome_text.insert(tk.END, " ".join(self.outcomes))
         outcome_text.configure(state='disabled')
+
+    def close_windows(self):
+        self.master.destroy()
+    
+class Output3:
+    def __init__(self, master, outcome, policies):
+        self.master = master
+        self.outcome = outcome
+        self.policies = policies
+        self.frame = VerticalScrolledFrame(
+            master, 
+            bg="white",
+            cursor="arrow",
+            height= 1000,
+            width= 1000
+        )
+        self.show_outcome()
+        self.show_policies()
+        self.quitButton = tk.Button(self.frame, text = 'Quit', width = 25, command = self.close_windows)
+        self.quitButton.grid(column = 1, row = 3)
+        self.frame.pack()
+    
+    def show_outcome(self):
+        outcome_text = tk.Text(self.frame, height = 12, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
+        outcome_text.grid(column = 1, row = 0)
+        outcome_text.insert(self.outcome)
+        outcome_text.configure(state='disabled')
+
+    def show_policies(self):
+        policies_text = tk.Text(self.frame, height = 12, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
+        policies_text.grid(column = 1, row = 1)
+        policies_text.insert(tk.END, " ".join(self.policies))
+        policies_text.configure(state='disabled')
 
     def close_windows(self):
         self.master.destroy()
