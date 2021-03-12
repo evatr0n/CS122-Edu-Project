@@ -1,6 +1,11 @@
-# tkinter_practice.py
+#tkinter_practicebackup.py
 
+try:
+    import tkinter as tk
+except ImportError:
+    import Tkinter as tk
 import tkinter as tk
+
 from tkinter import ttk
 import pandas as pd
 nces_final = pd.read_csv("csv/nces_final.csv", index_col = 0)
@@ -52,14 +57,14 @@ class Window1:
         default_opt_frame = tk.Frame(self.frame, bg = "dark blue")
         default_opt_frame.grid(column = 0, row = 1)
         option1_label = ttk.Label(default_opt_frame, text = "Option 1 Retrieve information on how effective a state's relevant policies are for all or particular educational outcomes: ").grid(column = 0,  
-        row = 0, padx = 35, pady = 25, columnspan = 3)
+        row = 0, padx = 35, pady = 25)
         # State Selection Label
         state_label = ttk.Label(default_opt_frame, text = "Select one state, or select multiple to compare").grid(column = 0,  
-                row = 1, padx = 35, pady = 25, columnspan=2) 
+                row = 1, padx = 35, pady = 25) 
 
         # State Selection listbox widget
         self.state_listbox = tk.Listbox(default_opt_frame, selectmode = "multiple", exportselection = False, width=20, height=10)
-        self.state_listbox.grid(column = 0, row = 2, sticky="E")
+        self.state_listbox.grid(column = 0, row = 2)
         # Adding scrollbar to listbox
         state_scrollbar = tk.Scrollbar(default_opt_frame)
         state_scrollbar.config(command=self.state_listbox.yview)
@@ -74,20 +79,18 @@ class Window1:
         
         # Calculate Button
         button = tk.Button(default_opt_frame, text="Calculate!", bd = "5", command=self.retrieve1)
-        button.grid(column = 2, row = 2)
+        button.grid(column = 3, row = 2)
     
     def fws_nondefault_frame(self):
         fws_nondefault_frame = tk.Frame(self.frame, bg = "purple")
         fws_nondefault_frame.grid(column = 0, row = 2)
         # Label 
         option2_label = ttk.Label(fws_nondefault_frame, text = "Option 2: Recalculate state scores by specifying particular outcome variables").grid(column = 0,  
-        row = 0, padx = 35, pady = 25, columnspan = 2, sticky="W")
-        state_label = ttk.Label(fws_nondefault_frame, text = "Select one state, or select multiple to compare").grid(column = 0,  
-                row = 1, padx = 35, pady = 25, columnspan=2)
+        row = 0, padx = 35, pady = 25)
 
         # List box widget
         self.state2_listbox = tk.Listbox(fws_nondefault_frame, selectmode = "multiple", exportselection = False, width=20, height=10)
-        self.state2_listbox.grid(column = 0, row = 2, sticky="E")
+        self.state2_listbox.grid(column = 0, row = 2)
         # Adding scrollbar to listbox
         state_scrollbar = tk.Scrollbar(fws_nondefault_frame)
         state_scrollbar.config(command=self.state2_listbox.yview)
@@ -101,20 +104,20 @@ class Window1:
             self.state2_listbox.itemconfig(i, bg = "deep sky blue")
 
         ## Outcomes selection listbox widget
-        outcomes2_label = ttk.Label(fws_nondefault_frame, text = "Select the outcomes you want to investigate:").grid(column = 2,  
-        row = 1, padx = 35, pady = 25, columnspan=2) 
+        outcomes2_label = ttk.Label(fws_nondefault_frame, text = "Select the outcomes you want to investigate:").grid(column = 1,  
+        row = 1, padx = 35, pady = 25) 
         # outcomes Selection listbox widget
         self.outcomes2_listbox = tk.Listbox(fws_nondefault_frame, selectmode = "multiple", exportselection = False, width=35, height=10)
-        self.outcomes2_listbox.grid(column = 2, row = 2, sticky="E")
+        self.outcomes2_listbox.grid(column = 1, row = 2)
         # Adding scrollbar to listbox
         outcomes2_scrollbar = tk.Scrollbar(fws_nondefault_frame)
         outcomes2_scrollbar.config(command=self.outcomes2_listbox.yview)
         self.outcomes2_listbox.config(yscrollcommand=outcomes2_scrollbar.set)
-        outcomes2_scrollbar.grid(column=3, row=2, sticky='NSW')
+        outcomes2_scrollbar.grid(column=2, row=2, sticky='NSW')
 
         # Adding calculate button widget 
         button = tk.Button(fws_nondefault_frame, text="Calculate!", bd = "5", command=self.retrieve2)
-        button.grid(column = 4, row = 2)
+        button.grid(column = 3, row = 2)
 
         for i, outcome in enumerate(trend_outcomes): 
     
@@ -138,11 +141,11 @@ class Window1:
 
         # policies selection label
         policies_label = ttk.Label(special_opt_frame, text = "Select which policies to consider:").grid(column = 1,  
-                row = 1, padx = 35, pady = 25, columnspan = 2) 
+                row = 1, padx = 35, pady = 25) 
 
         # policies Selection listbox widget
         self.policies3_listbox = tk.Listbox(special_opt_frame, selectmode = "multiple", exportselection = False, width=35, height=10)
-        self.policies3_listbox.grid(column = 1, row = 2, sticky="E")
+        self.policies3_listbox.grid(column = 1, row = 2)
 
         # Adding scrollbar to listbox
         policies3_scrollbar = tk.Scrollbar(special_opt_frame)
@@ -154,11 +157,11 @@ class Window1:
         policies3_scrollbarh = tk.Scrollbar(special_opt_frame)
         policies3_scrollbarh.config(command=self.policies3_listbox.xview)
         self.policies3_listbox.config(xscrollcommand=policies3_scrollbarh.set)
-        policies3_scrollbarh.grid(column=1, row=3, sticky='NWE')
+        policies3_scrollbarh.grid(column=1, row=3, sticky='WE')
 
          # Adding calculate button widget 
         button = tk.Button(special_opt_frame, text="Calculate!", bd = "5", command=self.retrieve3)
-        button.grid(column = 4, row = 2)
+        button.grid(column = 3, row = 2)
 
         for i, outcome in enumerate(outcomes): 
       
@@ -209,7 +212,6 @@ class Window1:
 class Output1:
     def __init__(self, master, states):
         self.master = master
-        self.master.attributes("-fullscreen", True)
         self.states = states
         self.frame = VerticalScrolledFrame(
             master, 
@@ -235,7 +237,6 @@ class Output1:
 class Output2:
     def __init__(self, master, states, outcomes):
         self.master = master
-        self.master.attributes("-fullscreen", True)
         self.states = states
         self.outcomes = outcomes
         self.frame = VerticalScrolledFrame(
@@ -260,7 +261,7 @@ class Output2:
     def show_outcomes(self):
         outcome_text = tk.Text(self.frame, height = 12, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
         outcome_text.grid(column = 1, row = 1)
-        outcome_text.insert(tk.END, ", ".join(self.outcomes))
+        outcome_text.insert(tk.END, " ".join(self.outcomes))
         outcome_text.configure(state='disabled')
 
     def close_windows(self):
@@ -269,7 +270,6 @@ class Output2:
 class Output3:
     def __init__(self, master, outcome, policies):
         self.master = master
-        self.master.attributes("-fullscreen", True)
         self.outcome = outcome
         self.policies = policies
         self.frame = VerticalScrolledFrame(
@@ -288,13 +288,13 @@ class Output3:
     def show_outcome(self):
         outcome_text = tk.Text(self.frame, height = 12, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
         outcome_text.grid(column = 1, row = 0)
-        outcome_text.insert(tk.END, self.outcome)
+        outcome_text.insert(self.outcome)
         outcome_text.configure(state='disabled')
 
     def show_policies(self):
         policies_text = tk.Text(self.frame, height = 12, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
         policies_text.grid(column = 1, row = 1)
-        policies_text.insert(tk.END, ", ".join(self.policies))
+        policies_text.insert(tk.END, " ".join(self.policies))
         policies_text.configure(state='disabled')
 
     def close_windows(self):

@@ -31,7 +31,8 @@ for filename in os.listdir("csv/"):
     if filename.startswith("nctq"):
         nctqdic_original[filename.strip(".csv")] = pd.read_csv("csv/{}".format(filename), index_col = 0)
 
-
+nces_final = pd.read_csv("csv/nces_final.csv", index_col=0)
+nces_trends = nces_final[[col for col in nces_final.columns if col.startswith("Trend")]]
 '''
     try:
         year = int(filename.strip(".csv")[-4:])

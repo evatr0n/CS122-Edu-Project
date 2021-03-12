@@ -42,7 +42,7 @@ master_frame = VerticalScrolledFrame(
     cursor="arrow",
     height= screen_height,
     width=screen_width
-    )
+)
 master_frame.pack()
 
 ### Creating 3 frames for master_frame: intro, user input option 1, user input option 2 ###
