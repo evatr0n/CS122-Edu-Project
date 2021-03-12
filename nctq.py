@@ -13,6 +13,7 @@ import queue
 import re
 import pandas as pd
 import numbers
+import json
 
 
 
@@ -21,12 +22,13 @@ grade_to_score_map = {"Best practice": 6, "Meets goal": 5, "Nearly meets goal": 
                        "Does not meet goal": 1}
 
 
-def crawl_one_page_nctq(soup, nctq_page_url, dic={}):
-    policyname = soup.find("div", class_="page__head__content").findChildren()
+def crawl_one_page_nctq(soup, nctq_page_url, policy_dic={}, policydesc_dic={}):
     grades_list = soup.find_all("span", class_="grade__status")
     citation = soup.find("div", class_ = "suggestedCitation")
 
     if grades_list and citation:
+        policyname = soup.find("div", class_="page__head__content").findChildren()
+        policydesc = soup.find("header", class_="section__head").findChildren()[1].text
         policyname = " (".join([tag.text for tag in policyname]) + ")"
         policyname = " ".join(policyname.split())  # treats for inconsistent spacing
         year = int(re.findall("\((\d+)\)", citation.text)[0]) #get year collected from citation info
@@ -46,13 +48,14 @@ def crawl_one_page_nctq(soup, nctq_page_url, dic={}):
                 total_score += quant_score
                 num_states += 1
 
-        dic["nctq_{}".format(year)] = dic.get("nctq_{}".format(year), {})
+        policy_dic["nctq_{}".format(year)] = policy_dic.get("nctq_{}".format(year), {})
         statescoredic["US"] = round(total_score / num_states, 2)
-        dic["nctq_{}".format(year)][policyname] = statescoredic 
+        policy_dic["nctq_{}".format(year)][policyname] = statescoredic 
+        policydesc_dic[policyname] = policydesc
         print(year, nctq_page_url, "read")
 
     else:
-        print(nctq_page_url, "UNABLE TO READ")
+        print(nctq_page_url, "incompatible format, omitted")
 
 
 def crawl_nctq(source_url=home_url):
@@ -63,24 +66,25 @@ def crawl_nctq(source_url=home_url):
     visited_urls = set()
     nctq = {}
     df_dic = {}
+    policydesc_dic = {}
 
     for url in url_lst:
         if util.is_url_ok_to_follow(url, limiting_domain) and \
             url not in visited_urls and prefix in url:
             soup = make_soup(url)
             if soup:
-                crawl_one_page_nctq(soup, url, nctq)
+                crawl_one_page_nctq(soup, url, nctq, policydesc_dic)
         visited_urls.add(url)
-
-    #df_dic = {year: pd.DataFrame(data) for year, data in nctq.items()}
     
     for year, data in nctq.items():
         df_dic[year] = pd.DataFrame(data)
         df_dic[year].to_csv("csv/{}.csv".format(year))
-        
-    #df.to_csv(csv_file_name, sep='\t')
+    
+    with open('csv/policydesc_dic.json', 'w') as fp:
+        json.dump(policydesc_dic, fp)
 
-    return df_dic   
+
+    return df_dic, policydesc_dic
 
 
 def fill_na(df_dic):
