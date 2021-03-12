@@ -30,35 +30,36 @@ def scplot(dat, linmod):
     plt.title("{a} vs. {b}".format(a = dat.columns[0], b = dat.columns[1]))
 
 
-def dat_df(dat, linmod):
+def dat_df(dat, title = None, color = "palegreen"):
     """
-    Prints visualization of dataframes for base data and 
-    regression results, and the correlation matrix dataframe
+    Takes in Pandas DataFrame and returns matplotlib table object
 
     Inputs:
-    dat (Pandas DataFrame): A df with two columns, outcome and best policy
-    linmod (dict): a dictionary mapping the policy name to the corresponding coefficients
-                   in the linear model, as well as the intercept and model r^2 score (output
-                   from fws)
+    dat (Pandas DataFrame): A df with two columns
+    title (str): a string representing the title of the figure. Default is None
+    color (str): a string representing a color for the row and column cells.
+                 Default is pale green
 
     Outputs:
-    None; prints data and model coefficient dataframes, and the 
-          correlation matrix dataframe 
+    a matplotlib Table object representing the dataframe
     """
-    #could probably do this operation with DataFrame.apply but unsure
-    y_pred = dat.iloc[:,1].apply(lambda x: x * linmod[dat.columns[1]])
+    fig, ax = plt.subplots() 
+    ax.set_axis_off() 
     
-    #source_df contains base data, actual outcome values, and predicted outcome
-    #values from the regression.  Columns are as follows: outcome, predicted 
-    #outcome (from regression), and best policy
-    source_df = dat.insert(1, dat.columns[0] + " pred", y_pred)
-    print(source_df)
+    #pandas function to convert pandas dataframe to matplotlib table
+    table = pd.plotting.table(ax, dat, rowColours = [color] * dat.shape[0], 
+                              colColours = [color] * dat.shape[1], 
+                              cellLoc ='center', loc ='upper left')
+    #may also customize colors by column/row but might not be aesthetic
 
-    #visualization of regression coefficients: since each value i is a scalar, 
-    #need to convert values to arraylike to convert to dataframe
-    #may have to limit this to only the best policy rather than all policy inputs
-    lst_dict = {k: [i] for k, i in linmod.items()}
-    print(pd.DataFrame.from_dict(lst_dict))
+    if title:
+        fig.suptitle(title) 
+    return table
+
+    #should be noted that row labels default to the indices of the dataframe,
+    #which would be states in the policy/outcome dfs. For the df with the 
+    #linear model coefficients, may want to add a condition/argument 
+    #to remove them, since the row label would just be an integer index. 
 
 
 
