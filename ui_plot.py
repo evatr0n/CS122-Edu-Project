@@ -19,8 +19,7 @@ def scplot(dat, outcome, linmod):
                    from fws)
 
     Outputs:
-    (Figure, DataFrame) The plotted model, data and model coefficient dataframes, 
-                        and the correlation matrix dataframe 
+    (Figure) The plotted model
     """
     #could probably do this operation with DataFrame.apply but unsure
     temp = dat.copy()
@@ -44,7 +43,7 @@ def scplot(dat, outcome, linmod):
 
 
 
-def dat_df(dat, outcome, linmod)
+def dat_df(dat, outcome, linmod):
     """
     Prints visualization of dataframes for base data and 
     regression results, and the correlation matrix dataframe
