@@ -294,6 +294,9 @@ def final_frame(dfs):
 
 final = final_frame(dfs1).join(final_frame(dfs2))
 
+
+final = final.round(3)
+
 final["2018 Percentage of HS Drop Outs Age 16-24"] = 100 - final["2018 Percentage of HS Drop Outs Age 16-24"]
 
 us_state_abbrev = {
