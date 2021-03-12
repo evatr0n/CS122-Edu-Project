@@ -358,6 +358,10 @@ us_state_abbrev = {
 final.rename(index=us_state_abbrev, inplace=True)
 final.fillna(final.mean(), inplace=True)
 
+nces.raw.to_csv("csv/nces_raw.csv")
+nces.final.to_csv("csv/nces_final.csv")
+
+
 
 # outfile = "/home/jrgill/Desktop/cmsc12200-win-21-jrgill/Project/place"
 # y = "final.csv"
