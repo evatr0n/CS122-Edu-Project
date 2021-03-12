@@ -226,6 +226,12 @@ dfs1[5] = remove_dollar(dfs1[5])
 dfs2 = df_crawl2(data2)
 dfs2[4] = remove_dollar(dfs2[4])
 
+def fill_means(dfs):
+    for df in dfs:
+        df.fillna(df.mean(), inplace=True)
+
+fill_means(dfs1)
+fill_means(dfs2)
 
 def raw_data(dfs):
     first_frame = dfs[0]
@@ -254,14 +260,14 @@ def normalize(df):
 
 def get_slope(row):
     axisvalues = list(range(1, len(row) + 1))
-    regression = scipy.stats.linregress(row, y=axisvalues)
+    regression = scipy.stats.linregress(axisvalues, row)
     return regression.slope 
 
 
 def add_slope(df):
     col_name = "Trend: " + df.columns[0][5:]
-    df[col_name] = df.apply(get_slope, axis=1)
-    return df
+    trend = df.apply(get_slope, axis=1).to_frame(name=col_name)
+    return trend
 
 
 def final_frame(dfs):
@@ -271,8 +277,10 @@ def final_frame(dfs):
             df = normalize(df)
             final_dfs.append(df)
         else:
+            df = df.astype(float)
+            trend = add_slope(df)
             df = normalize(df)
-            df = add_slope(df)
+            df = df.join(trend)
             final_dfs.append(df)
     first_frame = final_dfs[0]
     for i in range(1, len(final_dfs)):
@@ -355,7 +363,7 @@ final.fillna(final.mean(), inplace=True)
 # y = "final.csv"
 
 
-final.to_csv("csv/nces_final.csv")
+# final.to_csv(os.path.join(outfile, y))
 
 
 
