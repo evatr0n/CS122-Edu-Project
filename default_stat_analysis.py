@@ -80,7 +80,7 @@ def default_calc(average_nctq, centered_average_nctq, NCES_df, R2, block_negativ
     states_overall_effectiveness_score = {state: sum(effectiveness_scores.values()) for \
             state, effectiveness_scores in state_to_policy_effectiveness_score.items()}
 
-    return states_overall_effectiveness_score, state_to_policy_effectiveness_score, policy_weight_dic
+    return states_overall_effectiveness_score, state_to_policy_effectiveness_score
     
 
 def get_scores(states_overall_effectiveness_score, state_to_policy_effectiveness_score, state):
