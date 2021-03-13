@@ -227,7 +227,7 @@ class Window1:
         self.new_window3(outcome, policies)
     
 
-    def new_window1(self, states, return_dict):
+    def new_window1(self, return_dict):
         self.newWindow1 = tk.Toplevel(self.frame)
         self.output1 = output1.Output1(self.newWindow1, return_dict)
 
