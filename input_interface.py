@@ -197,12 +197,16 @@ class Window1:
     
     def retrieve1(self, states_score_dict, state_to_pols_score_dict):
         states = [self.state_listbox.get(idx) for idx in self.state_listbox.curselection()]
+        outcomes = list(nces_trends.columns)
         return_dict = {}
         for state in states:
             score, best_pol, worst_pol = dsa.get_scores(states_score_dict, state_to_pols_score_dict, state)
             return_dict[state] = [score, best_pol, worst_pol]
         print("states" + str(states))
-        self.new_window1(return_dict)
+        # for testing purposes
+        return_dict = {"IL": [50, "Pay Scales (Retaining Effective Teachers Policy)", "	Academic Requirements (Early Childhood Preparation Policy)"], 
+        "CA": [75, "Pension Flexibility (Retaining Effective Teachers Policy)", "Induction (Retaining Effective Teachers Policy)"]}
+        self.new_window1(return_dict, outcomes)
 
 
     def retrieve2(self):
@@ -217,7 +221,10 @@ class Window1:
             return_dict[state] = [score, best_pol, worst_pol]
         print("states" + str(states))
         print("outcomes" + str(outcomes))
-        self.new_window1(return_dict)
+        # for testing purposes
+        return_dict = {"IL": [50, "Pay Scales (Retaining Effective Teachers Policy)", "	Academic Requirements (Early Childhood Preparation Policy)"], 
+        "CA": [75, "Pension Flexibility (Retaining Effective Teachers Policy)", "Induction (Retaining Effective Teachers Policy)"]}
+        self.new_window1(return_dict, outcomes)
 
 
     def retrieve3(self):
@@ -225,17 +232,17 @@ class Window1:
         policies = [self.policies3_listbox.get(idx) for idx in self.policies3_listbox.curselection()]
         print("outcome: " + str(outcome))
         print("policies" + str(policies))
-        self.new_window3(outcome, policies)
+        self.new_window2(outcome, policies)
     
 
-    def new_window1(self, return_dict):
+    def new_window1(self, return_dict, outcomes):
         self.newWindow1 = tk.Toplevel(self.frame)
-        self.output1 = output1.Output1(self.newWindow1, return_dict)
+        self.output1 = output1.Output1(self.newWindow1, return_dict, outcomes)
 
 
-    def new_window3(self, outcome, policies):
-        self.newWindow3 = tk.Toplevel(self.frame)
-        self.output3 = output2.Output2(self.newWindow3, outcome, policies)
+    def new_window2(self, outcome, policies):
+        self.newWindow2 = tk.Toplevel(self.frame)
+        self.output2 = output2.Output2(self.newWindow2, outcome, policies)
 
 
 def main(): #run mianloop 
