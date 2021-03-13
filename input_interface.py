@@ -229,12 +229,12 @@ class Window1:
 
     def new_window1(self, states, return_dict):
         self.newWindow1 = tk.Toplevel(self.frame)
-        self.output1 = Output1(self.newWindow1, return_dict)
+        self.output1 = output1.Output1(self.newWindow1, return_dict)
 
 
     def new_window3(self, outcome, policies):
         self.newWindow3 = tk.Toplevel(self.frame)
-        self.output3 = Output2(self.newWindow3, outcome, policies)
+        self.output3 = output2.Output2(self.newWindow3, outcome, policies)
 
 
 def main(): #run mianloop 
