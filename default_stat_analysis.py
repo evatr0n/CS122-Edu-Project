@@ -61,7 +61,7 @@ def default_calc(average_nctq, centered_average_nctq, NCES_df, R2, block_negativ
             denom = math.floor(math.log(max_b, 10))
             for policy, coef in policy_coef:
                 policy_weight_dic[policy] = policy_weight_dic.get(policy, 0) + \
-                                            ((coef / (10 ** denom)) * reg_eq_from_outcome["Model Score (r2)"])
+                                            ((coef / (10 ** denom)) * reg_eq_from_outcome["Model Score (r2)"]) #(coef * reg_eq_from_outcome["Model Score (r2)"])
                 # since for all outcome variables in the trend data, the intercept is 0 (explained in fws),
                 # moving the decimal point an equal number of places in coefficients presents no substantive 
                 # change to direction and magnitude of marginal effect while making coefficients from 
@@ -80,7 +80,7 @@ def default_calc(average_nctq, centered_average_nctq, NCES_df, R2, block_negativ
     states_overall_effectiveness_score = {state: sum(effectiveness_scores.values()) for \
             state, effectiveness_scores in state_to_policy_effectiveness_score.items()}
 
-    return states_overall_effectiveness_score, state_to_policy_effectiveness_score
+    return states_overall_effectiveness_score, state_to_policy_effectiveness_score, policy_weight_dic
     
 
 def get_scores(states_overall_effectiveness_score, state_to_policy_effectiveness_score, state):

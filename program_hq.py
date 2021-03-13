@@ -22,7 +22,10 @@ centered_avg_nctq = nctq.center_df(avg_nctq) # Use this for default scores.
 # computing individual weights of policies through bivariate regression
 print("Calculating state overall scores...")
 states_overall_effectiveness_score, state_to_policy_effectiveness_score, policy_weight_dic =\
-    d.default_calc(avg_nctq, centered_avg_nctq, nces_trends, 0.05)
+    d.default_calc(avg_nctq, centered_avg_nctq, nces_trends, 0.05, True)
+    # trends needs to be updated to treat for outliers. 
+    # 0.1 works too, but returns only 3 policies. 
+
 print("Loading completed")
 
 #################################################################################
