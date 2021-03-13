@@ -24,7 +24,7 @@ nctqdic_filled = nctq.fill_na(nctqdic_original)
 avg_nctq = nctq.average_df(nctqdic_filled).sort_index()  
 centered_avg_nctq = nctq.center_df(avg_nctq)
 
-return_dict = {"IL": [50, "Pay Scales (Retaining Effective Teachers Policy)", "	Academic Requirements (Early Childhood Preparation Policy)"], 
+return_dict = {"IL": [50, "Pay Scales (Retaining Effective Teachers Policy)", "Academic Requirements (Early Childhood Preparation Policy)"], 
         "CA": [75, "Pension Flexibility (Retaining Effective Teachers Policy)", "Induction (Retaining Effective Teachers Policy)"]}
 outcomes = ['Trend: Average Daily Attendance %', 'Trend: Students Enrolled in Gifted Programs %', 'Trend: Average Base Teacher Salary w/ Bachelors', 'Trend: Average Base Teacher Salary w/ Masters Constant Dollars', 'Trend: Teacher Percentage of School Staff', 'Trend: Average Freshman Graduation Rate', 'Trend: 4th Grade Reading Scores', 'Trend: 8th Grade Math Scores', 'Trend: 4th Grade Math Scores', 'Trend: Overall Average Teacher Salary', 'Trend: % of Public Schools That Are Charters', 'Trend: Adjusted Cohort Graduation Rate']
 
@@ -35,14 +35,14 @@ class Output1:
         self.return_dict = return_dict
         self.states = return_dict.keys()
         self.outcomes = outcomes
-        # self.screen_width = master.winfo_screenwidth()
-        # self.screen_height= master.winfo_screenheight()
+        self.screen_width = master.winfo_screenwidth()
+        self.screen_height= master.winfo_screenheight()
         self.frame = VerticalScrolledFrame(
             master, 
             bg="white",
             cursor="arrow",
-            height= 1000,
-            width= 1000
+            height= self.screen_height,
+            width= self.screen_width
         )
         self.title_frame()
         self.build_miniFrames()
@@ -51,19 +51,19 @@ class Output1:
 
     def title_frame(self):
         title_frame = tk.Frame(self.frame, bg = "pink")
-        title_frame.pack()
-        text = tk.Text(title_frame, height = 5, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
-        text.grid(column = 1, row = 0)
+        title_frame.pack(anchor="n", fill="x", expand=False)
+        text = tk.Text(title_frame, height = 5, bg = "pink", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
+        text.grid(column = 0, row = 0)
         intro = "This is a general description of how the default calc works"
         text.insert(tk.END, intro)
         text.configure(state='disabled')
 
         quitButton = tk.Button(title_frame, text = 'Quit', width = 25, command = self.close_windows)
-        quitButton.grid(column = 2, row = 0)
+        quitButton.grid(column = 1, row = 0, sticky="e")
 
     def build_miniFrames(self):
         all_states_frame = tk.Frame(self.frame, bg = "blue")
-        all_states_frame.pack()
+        all_states_frame.pack(anchor="n", fill="x", expand=False)
         for state in self.states:
             new_frame = miniFrame(state, return_dict, all_states_frame)
         # call miniFrame class to build as many of those as there are states
@@ -75,7 +75,7 @@ class Output1:
 class miniFrame:
     def __init__(self, state, return_dict, all_states_frame):
         self.state_frame = tk.Frame(all_states_frame, bg = "green")
-        self.state_frame.pack(expand=True, fill="x")
+        self.state_frame.pack(anchor="n", fill="x", expand=False)
         self.return_dict = return_dict
         self.state = state
         self.score = return_dict[state][0]
@@ -86,14 +86,14 @@ class miniFrame:
 
     def info_frame(self):
         state_text = "State: " + self.state
-        score_text = "Score: " + str(self.score) + "th percentile"
-        best_pol_text = "The Most Effective Policy for " + self.state + " was: " + self.best_policy
-        least_pol_text = "The Least Effective Policy for " + self.state + " was: " + self.worst_policy
-        state_label = ttk.Label(self.state_frame, text=state_text, anchor=tk.CENTER).grid(column = 0, row = 1, padx = 35, pady = 25, columnspan=2)
-        score_label = ttk.Label(self.state_frame, text=score_text, anchor=tk.CENTER).grid(column = 0, row = 2, padx = 35, pady = 25, columnspan=2)
-        best_label = ttk.Label(self.state_frame, text=best_pol_text, anchor=tk.CENTER).grid(column = 2, row = 2, padx = 35, pady = 25, columnspan=2)
-        worst_label = ttk.Label(self.state_frame, text=least_pol_text, anchor=tk.CENTER).grid(column = 2, row = 3, padx = 35, pady = 25, columnspan=2)
-        
+        score_text = "Score:\n" + str(self.score) + "th percentile"
+        best_pol_text = "The most effective policy for " + self.state + " was:\n" + self.best_policy
+        least_pol_text = "The least effective policy for " + self.state + " was:\n" + self.worst_policy
+        state_label = ttk.Label(self.state_frame, text=state_text, anchor="center", font=("Helvetica", 20), background="light green").grid(column = 0, row = 1, padx = 35, pady = 25, columnspan=2)
+        score_label = ttk.Label(self.state_frame, text=score_text, anchor="w", font=("Helvetica", 18), background="light green").grid(column = 0, row = 2, padx = 35, pady = 25, columnspan=2)
+        best_label = ttk.Label(self.state_frame, text=best_pol_text, anchor="w", font=("Helvetica", 15), background="light green").grid(column = 2, row = 2, padx = 35, pady = 25, columnspan=2)
+        worst_label = ttk.Label(self.state_frame, text=least_pol_text, anchor="w", font=("Helvetica", 15), background="light green").grid(column = 2, row = 3, padx = 35, pady = 25, columnspan=2)
+
 
     def plots_frame(self):
         pass
