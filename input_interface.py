@@ -3,11 +3,34 @@
 import tkinter as tk
 from tkinter import ttk
 import pandas as pd
-nces_final = pd.read_csv("csv/nces_final.csv", index_col = 0)
-nces_trends = nces_final[[col for col in nces_final.columns if col.startswith("Trend")]]
+import os
 
-
+#import nces
+import nctq
+import output1
+import output2
+import default_stat_analysis as dsa
 from ui_util import VerticalScrolledFrame
+
+# Import the nces data
+nces_final = pd.read_csv("csv/nces_final.csv", index_col=0)
+nces_trends = nces_final[[col for col in nces_final.columns if col.startswith("Trend")]]
+nces_original = pd.read_csv("csv/nces_raw.csv", index_col=0)
+
+# Import the nctq data
+nctqdic_original = {}
+for filename in os.listdir("csv/"):
+    if filename.startswith("nctq"):
+        nctqdic_original[filename.strip(".csv")] = pd.read_csv("csv/{}".format(filename), index_col = 0)
+nctqdic_filled = nctq.fill_na(nctqdic_original)
+avg_nctq = nctq.average_df(nctqdic_filled).sort_index()  
+centered_avg_nctq = nctq.center_df(avg_nctq)
+
+# Run function to get scores for Option 1 (so this never needs to be run again)
+R2 = 0.1 # change this in function call as needed, this is just a placeholder
+states_score_dict, state_to_pols_score_dict= dsa.default_calc(
+        avg_nctq, centered_avg_nctq, nces_trends, R2, block_negative=True, outcomes=None
+    )
 
 
 states = ["US", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA", 
@@ -171,19 +194,30 @@ class Window1:
         return scrollbar
         #scrollbar.pack(side="right", fill="y")
     
-    def retrieve1(self):
+    def retrieve1(self, states_score_dict, state_to_pols_score_dict):
         states = [self.state_listbox.get(idx) for idx in self.state_listbox.curselection()]
-        #outcomes = [outcomes_listbox.get(idx) for idx in outcomes_listbox.curselection()]
+        return_dict = {}
+        for state in states:
+            score, best_pol, worst_pol = dsa.get_scores(states_score_dict, state_to_pols_score_dict, state)
+            return_dict[state] = [score, best_pol, worst_pol]
         print("states" + str(states))
-        #print("outcomes" + str(outcomes))
-        self.new_window1(states)
+        self.new_window1(return_dict)
+
 
     def retrieve2(self):
         states = [self.state2_listbox.get(idx) for idx in self.state2_listbox.curselection()]
         outcomes = [self.outcomes2_listbox.get(idx) for idx in self.outcomes2_listbox.curselection()]
+        states_score_dict, state_to_pols_score_dict = dsa.default_calc(
+                avg_nctq, centered_avg_nctq, nces_trends, R2, block_negative=True, outcomes=False
+            )   
+        return_dict = {}    
+        for state in states:
+            score, best_pol, worst_pol = dsa.get_scores(states_score_dict, state_to_pols_score_dict, state)
+            return_dict[state] = [score, best_pol, worst_pol]
         print("states" + str(states))
         print("outcomes" + str(outcomes))
-        self.new_window2(states, outcomes)
+        self.new_window1(return_dict)
+
 
     def retrieve3(self):
         outcome = self.outcomes_combobox.get()
@@ -192,113 +226,16 @@ class Window1:
         print("policies" + str(policies))
         self.new_window3(outcome, policies)
     
-    def new_window1(self, states):
-        self.newWindow1 = tk.Toplevel(self.frame)
-        self.output1 = Output1(self.newWindow1, states)
 
-    def new_window2(self, states, outcomes):
-        self.newWindow2 = tk.Toplevel(self.frame)
-        self.output2 = Output2(self.newWindow2, states, outcomes)
+    def new_window1(self, states, return_dict):
+        self.newWindow1 = tk.Toplevel(self.frame)
+        self.output1 = Output1(self.newWindow1, return_dict)
+
 
     def new_window3(self, outcome, policies):
         self.newWindow3 = tk.Toplevel(self.frame)
-        self.output3 = Output3(self.newWindow3, outcome, policies)
+        self.output3 = Output2(self.newWindow3, outcome, policies)
 
-
-
-class Output1:
-    def __init__(self, master, states):
-        self.master = master
-        self.master.attributes("-fullscreen", True)
-        self.states = states
-        self.frame = VerticalScrolledFrame(
-            master, 
-            bg="white",
-            cursor="arrow",
-            height= 1000,
-            width= 1000
-        )
-        self.show_states()
-        self.quitButton = tk.Button(self.frame, text = 'Quit', width = 25, command = self.close_windows)
-        self.quitButton.grid(column = 1, row = 3)
-        self.frame.pack()
-    
-    def show_states(self):
-        state_text = tk.Text(self.frame, height = 12, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
-        state_text.grid(column = 1, row = 0)
-        state_text.insert(tk.END, " ".join(self.states))
-        state_text.configure(state='disabled')
-
-    def close_windows(self):
-        self.master.destroy()
-
-class Output2:
-    def __init__(self, master, states, outcomes):
-        self.master = master
-        self.master.attributes("-fullscreen", True)
-        self.states = states
-        self.outcomes = outcomes
-        self.frame = VerticalScrolledFrame(
-            master, 
-            bg="white",
-            cursor="arrow",
-            height= 1000,
-            width= 1000
-        )
-        self.show_states()
-        self.show_outcomes()
-        self.quitButton = tk.Button(self.frame, text = 'Quit', width = 25, command = self.close_windows)
-        self.quitButton.grid(column = 1, row = 3)
-        self.frame.pack()
-    
-    def show_states(self):
-        state_text = tk.Text(self.frame, height = 12, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
-        state_text.grid(column = 1, row = 0)
-        state_text.insert(tk.END, " ".join(self.states))
-        state_text.configure(state='disabled')
-
-    def show_outcomes(self):
-        outcome_text = tk.Text(self.frame, height = 12, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
-        outcome_text.grid(column = 1, row = 1)
-        outcome_text.insert(tk.END, ", ".join(self.outcomes))
-        outcome_text.configure(state='disabled')
-
-    def close_windows(self):
-        self.master.destroy()
-    
-class Output3:
-    def __init__(self, master, outcome, policies):
-        self.master = master
-        self.master.attributes("-fullscreen", True)
-        self.outcome = outcome
-        self.policies = policies
-        self.frame = VerticalScrolledFrame(
-            master, 
-            bg="white",
-            cursor="arrow",
-            height= 1000,
-            width= 1000
-        )
-        self.show_outcome()
-        self.show_policies()
-        self.quitButton = tk.Button(self.frame, text = 'Quit', width = 25, command = self.close_windows)
-        self.quitButton.grid(column = 1, row = 3)
-        self.frame.pack()
-    
-    def show_outcome(self):
-        outcome_text = tk.Text(self.frame, height = 12, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
-        outcome_text.grid(column = 1, row = 0)
-        outcome_text.insert(tk.END, self.outcome)
-        outcome_text.configure(state='disabled')
-
-    def show_policies(self):
-        policies_text = tk.Text(self.frame, height = 12, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
-        policies_text.grid(column = 1, row = 1)
-        policies_text.insert(tk.END, ", ".join(self.policies))
-        policies_text.configure(state='disabled')
-
-    def close_windows(self):
-        self.master.destroy()
 
 def main(): #run mianloop 
     root = tk.Tk()

@@ -8,10 +8,10 @@ import ui_plot
 
 
 class Output1:
-    def __init__(self, master, states):
+    def __init__(self, master, return_dict):
         self.master = master
         self.master.attributes("-fullscreen", True)
-        self.states = states
+        self.return_dict = return_dict
         self.frame = VerticalScrolledFrame(
             master, 
             bg="white",
@@ -27,7 +27,7 @@ class Output1:
     def show_states(self):
         state_text = tk.Text(self.frame, height = 12, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
         state_text.grid(column = 1, row = 0)
-        state_text.insert(tk.END, " ".join(self.states))
+        state_text.insert(tk.END, " ".join(self.return_dict.keys()))
         state_text.configure(state='disabled')
 
     def close_windows(self):
