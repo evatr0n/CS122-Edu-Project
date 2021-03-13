@@ -193,9 +193,9 @@ class Window1:
         button = tk.Button(special_opt_frame, text="Calculate!", bd = "5", command=self.retrieve3)
         button.grid(column = 4, row = 2)
 
-        for i, outcome in enumerate(outcomes): 
+        for i, policy in enumerate(avg_nctq.columns): 
       
-            self.policies3_listbox.insert(tk.END, outcome) 
+            self.policies3_listbox.insert(tk.END, policy) 
             self.policies3_listbox.itemconfig(i, bg = "deep sky blue") 
         
 
