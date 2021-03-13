@@ -62,8 +62,9 @@ class Window1:
     
     def welcome_frame(self):
         welcome_frame = tk.Frame(self.frame, bg = "pink")
-        welcome_frame.grid(column = 0, row = 0)
-        welcome_text_box = tk.Text(welcome_frame, height = 12, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
+        #welcome_frame.grid(column = 0, row = 0)
+        welcome_frame.pack(expand=True, fill='x')
+        welcome_text_box = tk.Text(welcome_frame, height = 12, bg = "pink", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
         welcome_text_box.grid(column = 0, row = 0)
         intro = "Hello and welcome to our program! This tool will allow you to evaluate the effectivness and correlations of American educational policies on its outcomes, on a per state, per outcome, or per policy basis"
         sources = "We ulilize data from the National Council on Teacher Quality (NCTQ) and the National Center for Education Statistics (NCES)"
@@ -73,7 +74,8 @@ class Window1:
     
     def default_opt_frame(self):
         default_opt_frame = tk.Frame(self.frame, bg = "dark blue")
-        default_opt_frame.grid(column = 0, row = 1)
+        default_opt_frame.pack(expand=True, fill='x')
+        #grid(column = 0, row = 1)
         option1_label = ttk.Label(default_opt_frame, text = "Option 1 Retrieve information on how effective a state's relevant policies are for all or particular educational outcomes: ").grid(column = 0,  
         row = 0, padx = 35, pady = 25, columnspan = 3)
         # State Selection Label
@@ -102,7 +104,8 @@ class Window1:
     
     def fws_nondefault_frame(self):
         fws_nondefault_frame = tk.Frame(self.frame, bg = "purple")
-        fws_nondefault_frame.grid(column = 0, row = 2)
+        fws_nondefault_frame.pack(expand=True, fill='x')
+        #grid(column = 0, row = 2)
         # Label 
         option2_label = ttk.Label(fws_nondefault_frame, text = "Option 2: Recalculate state scores by specifying particular outcome variables").grid(column = 0,  
         row = 0, padx = 35, pady = 25, columnspan = 2, sticky="W")
@@ -147,7 +150,8 @@ class Window1:
     
     def special_opt_frame(self):
         special_opt_frame = tk.Frame(self.frame, bg = "green")
-        special_opt_frame.grid(column = 0, row = 3)
+        special_opt_frame.pack(expand=True, fill='x')
+        #grid(column = 0, row = 3)
         # Label 
         option3_label = ttk.Label(special_opt_frame, text = "Retrieve information on how particular policies interact with a given outcome: ").grid(column = 0,  
         row = 0, padx = 35, pady = 25)
