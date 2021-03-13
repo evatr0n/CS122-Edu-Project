@@ -9,6 +9,9 @@ import ui_plot
 import default_stat_analysis as dsa
 import nctq
 import os
+import basic_regression as br
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 # Import the nces data
 nces_final = pd.read_csv("csv/nces_final.csv", index_col=0)
@@ -25,7 +28,8 @@ avg_nctq = nctq.average_df(nctqdic_filled).sort_index()
 centered_avg_nctq = nctq.center_df(avg_nctq)
 
 return_dict = {"IL": [50, "Pay Scales (Retaining Effective Teachers Policy)", "Academic Requirements (Early Childhood Preparation Policy)"], 
-        "CA": [75, "Pension Flexibility (Retaining Effective Teachers Policy)", "Induction (Retaining Effective Teachers Policy)"]}
+        "CA": [75, "Pension Flexibility (Retaining Effective Teachers Policy)", "Induction (Retaining Effective Teachers Policy)"],
+        "NY": [90, "Pension Flexibility (Retaining Effective Teachers Policy)", "Induction (Retaining Effective Teachers Policy)"]}
 outcomes = ['Trend: Average Daily Attendance %', 'Trend: Students Enrolled in Gifted Programs %', 'Trend: Average Base Teacher Salary w/ Bachelors', 'Trend: Average Base Teacher Salary w/ Masters Constant Dollars', 'Trend: Teacher Percentage of School Staff', 'Trend: Average Freshman Graduation Rate', 'Trend: 4th Grade Reading Scores', 'Trend: 8th Grade Math Scores', 'Trend: 4th Grade Math Scores', 'Trend: Overall Average Teacher Salary', 'Trend: % of Public Schools That Are Charters', 'Trend: Adjusted Cohort Graduation Rate']
 
 class Output1:
@@ -50,9 +54,9 @@ class Output1:
        # self.frame.pack(side="top", fill="both", expand=True)
 
     def title_frame(self):
-        title_frame = tk.Frame(self.frame, bg = "pink")
+        title_frame = tk.Frame(self.frame, bg = "light blue")
         title_frame.pack(anchor="n", fill="x", expand=False)
-        text = tk.Text(title_frame, height = 5, bg = "pink", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
+        text = tk.Text(title_frame, height = 10, bg = "light blue", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
         text.grid(column = 0, row = 0)
         intro = "This is a general description of how the default calc works"
         text.insert(tk.END, intro)
@@ -65,7 +69,7 @@ class Output1:
         all_states_frame = tk.Frame(self.frame, bg = "blue")
         all_states_frame.pack(anchor="n", fill="x", expand=False)
         for state in self.states:
-            new_frame = miniFrame(state, return_dict, all_states_frame)
+            new_frame = miniFrame(state, return_dict, all_states_frame, self.outcomes)
         # call miniFrame class to build as many of those as there are states
         pass
 
@@ -73,7 +77,7 @@ class Output1:
         self.master.destroy()
     
 class miniFrame:
-    def __init__(self, state, return_dict, all_states_frame):
+    def __init__(self, state, return_dict, all_states_frame, outcomes):
         self.state_frame = tk.Frame(all_states_frame, bg = "green")
         self.state_frame.pack(anchor="n", fill="x", expand=False)
         self.return_dict = return_dict
@@ -81,22 +85,43 @@ class miniFrame:
         self.score = return_dict[state][0]
         self.best_policy = return_dict[state][1]
         self.worst_policy = return_dict[state][2]
+        self.outcomes = outcomes
         self.info_frame()
         self.plots_frame()
 
     def info_frame(self):
+        info_frame = tk.Frame(self.state_frame, bg = "green")
+        info_frame.pack(anchor="n", fill="x", expand=False)
         state_text = "State: " + self.state
-        score_text = "Score:\n" + str(self.score) + "th percentile"
-        best_pol_text = "The most effective policy for " + self.state + " was:\n" + self.best_policy
-        least_pol_text = "The least effective policy for " + self.state + " was:\n" + self.worst_policy
-        state_label = ttk.Label(self.state_frame, text=state_text, anchor="center", font=("Helvetica", 20), background="light green").grid(column = 0, row = 1, padx = 35, pady = 25, columnspan=2)
-        score_label = ttk.Label(self.state_frame, text=score_text, anchor="w", font=("Helvetica", 18), background="light green").grid(column = 0, row = 2, padx = 35, pady = 25, columnspan=2)
-        best_label = ttk.Label(self.state_frame, text=best_pol_text, anchor="w", font=("Helvetica", 15), background="light green").grid(column = 2, row = 2, padx = 35, pady = 25, columnspan=2)
-        worst_label = ttk.Label(self.state_frame, text=least_pol_text, anchor="w", font=("Helvetica", 15), background="light green").grid(column = 2, row = 3, padx = 35, pady = 25, columnspan=2)
+        score_text = "Score:\n\n" + str(self.score) + "th percentile"
+        best_pol_text = "The most effective policy for " + self.state + " was:\n\n" + self.best_policy
+        least_pol_text = "The least effective policy for " + self.state + " was:\n\n" + self.worst_policy
+        state_label = ttk.Label(info_frame, text=state_text, anchor="center", font=("Helvetica", 20), background="light green").grid(column = 0, row = 1, padx = 25, pady = 25, columnspan= 2, sticky="nw")
+        score_label = ttk.Label(info_frame, text=score_text, anchor="w", font=("Helvetica", 18), background="light green").grid(column = 0, row = 2, padx = 35, pady = 25)
+        best_label = ttk.Label(info_frame, text=best_pol_text, anchor="w", font=("Helvetica", 15), background="light green").grid(column = 2, row = 2, padx = 35, pady = 25)
+        worst_label = ttk.Label(info_frame, text=least_pol_text, anchor="w", font=("Helvetica", 15), background="light green").grid(column = 2, row = 3, padx = 35, pady = 25)
 
 
     def plots_frame(self):
-        pass
+        plots_frame = tk.Frame(self.state_frame, bg = "light blue")
+        plots_frame.pack(anchor="n", fill="x", expand=False)
+        for outcome in self.outcomes:
+            outcome_series = nces_trends[outcome]
+            best_pol_series = avg_nctq[self.best_policy]
+            #best_pol_series_abbr = ui_plot.abbrev_names(best_pol_series)
+            rr_df = br.run_regression(best_pol_series, outcome_series, trend=True)
+            #plot = ui_plot.scplot(best_pol_series_abbr, outcome_series, rr_df)
+
+            figure = plt.Figure(figsize=(3,2), dpi=100)
+            ax = figure.add_subplot(111)
+            ax.scatter(best_pol_series, outcome_series, color = 'g')
+            scatter = FigureCanvasTkAgg(figure, plots_frame) 
+            scatter.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
+            ax.legend(['State']) 
+            ax.set_xlabel(best_pol_series.name)
+            ax.set_ylabel(outcome_series.name)
+            ax.set_title("{a} vs. {b}".format(a = self.state + "'s Best Policy", b = "Trend Outcome"))
+
 
 # for testing purposes
 def main(): #run mianloop 
