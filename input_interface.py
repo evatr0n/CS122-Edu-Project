@@ -139,7 +139,7 @@ class Window1:
         self.outcomes2_listbox.config(yscrollcommand=outcomes2_scrollbar.set)
         outcomes2_scrollbar.grid(column=3, row=2, sticky='NSW')
         # Adding horizontal scrollbar to outcomes listbox
-        outcomes2_scrollbarh = tk.Scrollbar(fws_nondefault_frame)
+        outcomes2_scrollbarh = tk.Scrollbar(fws_nondefault_frame, orient="horizontal")
         outcomes2_scrollbarh.config(command=self.outcomes2_listbox.xview)
         self.outcomes2_listbox.config(xscrollcommand=outcomes2_scrollbarh.set)
         outcomes2_scrollbarh.grid(column=2, row=3, sticky='NWE')
@@ -184,7 +184,7 @@ class Window1:
         policies3_scrollbar.grid(column=2, row=2, sticky='NSW')
 
         # Adding horizontal scrollbar to policies listbox
-        policies3_scrollbarh = tk.Scrollbar(special_opt_frame)
+        policies3_scrollbarh = tk.Scrollbar(special_opt_frame, orient="horizontal")
         policies3_scrollbarh.config(command=self.policies3_listbox.xview)
         self.policies3_listbox.config(xscrollcommand=policies3_scrollbarh.set)
         policies3_scrollbarh.grid(column=1, row=3, sticky='NWE')
