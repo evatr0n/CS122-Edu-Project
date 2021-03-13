@@ -133,11 +133,16 @@ class Window1:
         # outcomes Selection listbox widget
         self.outcomes2_listbox = tk.Listbox(fws_nondefault_frame, selectmode = "multiple", exportselection = False, width=35, height=10)
         self.outcomes2_listbox.grid(column = 2, row = 2, sticky="E")
-        # Adding scrollbar to listbox
+        # Adding vertical scrollbar to outcomes listbox
         outcomes2_scrollbar = tk.Scrollbar(fws_nondefault_frame)
         outcomes2_scrollbar.config(command=self.outcomes2_listbox.yview)
         self.outcomes2_listbox.config(yscrollcommand=outcomes2_scrollbar.set)
         outcomes2_scrollbar.grid(column=3, row=2, sticky='NSW')
+        # Adding horizontal scrollbar to outcomes listbox
+        outcomes2_scrollbarh = tk.Scrollbar(fws_nondefault_frame)
+        outcomes2_scrollbarh.config(command=self.outcomes2_listbox.xview)
+        self.outcomes2_listbox.config(xscrollcommand=outcomes2_scrollbarh.set)
+        outcomes2_scrollbarh.grid(column=2, row=3, sticky='NWE')
 
         # Adding calculate button widget 
         button = tk.Button(fws_nondefault_frame, text="Calculate!", bd = "5", command=self.retrieve2)
@@ -178,7 +183,7 @@ class Window1:
         self.policies3_listbox.config(yscrollcommand=policies3_scrollbar.set)
         policies3_scrollbar.grid(column=2, row=2, sticky='NSW')
 
-        # Adding scrollbar to listbox
+        # Adding horizontal scrollbar to policies listbox
         policies3_scrollbarh = tk.Scrollbar(special_opt_frame)
         policies3_scrollbarh.config(command=self.policies3_listbox.xview)
         self.policies3_listbox.config(xscrollcommand=policies3_scrollbarh.set)
