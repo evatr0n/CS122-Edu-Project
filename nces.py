@@ -221,6 +221,7 @@ def df_crawl2(df_dict):
 
 
 dfs1 = df_crawl1(data)
+dfs1[1].loc['District of Columbia'] = [0, 0 , 0.1, 0.1]
 dfs1[4] = remove_dollar(dfs1[4])
 dfs1[5] = remove_dollar(dfs1[5])
 dfs2 = df_crawl2(data2)
@@ -259,9 +260,19 @@ def normalize(df):
 
 
 def get_slope(row):
-    axisvalues = list(range(1, len(row) + 1))
-    regression = scipy.stats.linregress(axisvalues, row)
-    return regression.slope 
+    slopes = []
+    for i in range(1, len(row)):
+        if row[i - 1] == 0:
+            continue
+        else:
+            slope = (row[i] - row[i-1]) / row[i - 1]
+            slope *= 100
+            slopes.append(slope)
+    if len(slopes) > 0:
+        avg = sum(slopes) / len(slopes)
+    else:
+        avg = 0
+    return avg
 
 
 def add_slope(df):
@@ -294,8 +305,6 @@ def final_frame(dfs):
 
 final = final_frame(dfs1).join(final_frame(dfs2))
 
-
-final = final.round(3)
 
 final["2018 Percentage of HS Drop Outs Age 16-24"] = 100 - final["2018 Percentage of HS Drop Outs Age 16-24"]
 
@@ -360,9 +369,10 @@ us_state_abbrev = {
 }
 final.rename(index=us_state_abbrev, inplace=True)
 final.fillna(final.mean(), inplace=True)
+final = final.round(3)
 
-raw.to_csv("csv/nces_raw.csv")
-final.to_csv("csv/nces_final.csv")
+nces.raw.to_csv("csv/nces_raw.csv")
+nces.final.to_csv("csv/nces_final.csv")
 
 
 
