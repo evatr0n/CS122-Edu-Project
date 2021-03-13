@@ -6,6 +6,7 @@ import numpy as np
 import fws
 import pandas as pd
 import os
+import json
 
 print("Loading NCTQ Teaching Policy data.....")
 nctqdic_original = nctq.crawl_nctq()
@@ -39,6 +40,8 @@ for filename in os.listdir("csv/"):
 nctqdic_filled = nctq.fill_na(nctqdic_original)
 avg_nctq = nctq.average_df(nctqdic_filled).sort_index()  
 centered_avg_nctq = nctq.center_df(avg_nctq)
+with open('csv/policydesc_dic.json', 'r') as fp:
+    policydesc_dic = json.load(fp)
 
 nces_final = pd.read_csv("csv/nces_final.csv", index_col=0)
 nces_trends = nces_final[[col for col in nces_final.columns if col.startswith("Trend")]]
