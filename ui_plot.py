@@ -2,22 +2,20 @@ from matplotlib import pyplot as plt
 import pandas as pd
 import re
 
-def scplot(dat, dep, linmod):
+def scplot(dat, dep, coef):
     """
     Plots scatter plot with regression line
 
     Inputs:
     dat (Pandas Series): data structure containing data about the best policy
     dep (Pandas Series): data structure containing data about outcome of interest
-    linmod (dict): a dictionary mapping the policy name to the corresponding coefficients
-                   in the linear model, as well as the intercept and model r^2 score (output
-                   from fws)
+    coef (Pandas DataFrame): output from basic_regression.run_regression()
 
     Outputs:
     (Figure) The plotted model
     """
     #series containing predicted values for outcome
-    y_pred = dat.apply(lambda x: x * linmod[dep.name])
+    y_pred = dat.apply(lambda x: x * coef.loc[dat.name])
     
     #scatterplot with regression line
     plt.plot(dat, y_pred)
@@ -25,6 +23,7 @@ def scplot(dat, dep, linmod):
     plt.xlabel(dat.name)
     plt.ylabel(dep.name)
     plt.title("{a} vs. {b}".format(a = dat.name, b = dep.name))
+    plt.savefig('test')
 
 
 def dat_df(dat, title = None, color = "palegreen"):
