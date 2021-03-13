@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 import pandas as pd
+import re
 
 def scplot(dat, dep, linmod):
     """
@@ -41,7 +42,8 @@ def dat_df(dat, title = None, color = "palegreen"):
     """
     fig, ax = plt.subplots() 
     ax.set_axis_off() 
-    
+    dat = dat.round(2)
+    dat = abbrev_names(dat)
 
     if len(dat.shape) > 1: #dataframe
         table = pd.plotting.table(ax, dat, rowColours = [color] * dat.shape[0], 
@@ -53,6 +55,10 @@ def dat_df(dat, title = None, color = "palegreen"):
                                   loc ='upper left')
     #may also customize colors by column/row but might not be aesthetic
 
+    table.auto_set_font_size(False)
+    table.set_fontsize(8)
+    table.auto_set_column_width(col=list(range(len(dat.columns))))
+
     if title:
         fig.suptitle(title) 
     return table
@@ -62,5 +68,15 @@ def dat_df(dat, title = None, color = "palegreen"):
     #linear model coefficients, may want to add a condition/argument 
     #to remove them, since the row label would just be an integer index. 
 
+def abbrev_names(dat):
+    abbrev_columns = {}
+    abbrev_index = {}
+    for col in dat.columns:
+        if len(col) > 20:
+            abbrev_columns[col] = col[:round(len(col) / 8)] + "...(" + ".".join(x[0] for x in re.findall("\((.+)\)", col)[-1].split()) + ")"
+    for index in dat.index:
+        if len(index) > 20:
+            abbrev_index[index] = index[:round(len(index) / 8)] + "...(" + ".".join(x[0] for x in re.findall("\((.+)\)", index)[-1].split()) + ")"
+    dat = dat.rename(columns=abbrev_columns, index=abbrev_index)
 
-
+    return dat
