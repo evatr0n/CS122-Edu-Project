@@ -96,7 +96,8 @@ class Window1:
             self.state_listbox.itemconfig(i, bg = "deep sky blue")
         
         # Calculate Button
-        button = tk.Button(default_opt_frame, text="Calculate!", bd = "5", command=self.retrieve1)
+        button = tk.Button(default_opt_frame, text="Calculate!", bd = "5", command = lambda: self.retrieve1(states_score_dict, state_to_pols_score_dict))
+        #command=self.retrieve1)
         button.grid(column = 2, row = 2)
     
     def fws_nondefault_frame(self):
