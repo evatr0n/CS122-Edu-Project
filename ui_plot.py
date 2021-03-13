@@ -1,17 +1,13 @@
 from matplotlib import pyplot as plt
 import pandas as pd
 
-#for testing
-import program_hq as phq
-data = pd.read_csv('final.csv')
-
-def scplot(dat, linmod):
+def scplot(dat, dep, linmod):
     """
-    Plots scatter plot with regression line, visualization of dataframes for base data and 
-    regression results, and the correlation matrix dataframe
+    Plots scatter plot with regression line
 
     Inputs:
-    dat (Pandas DataFrame): A df with two columns, outcome and best policy
+    dat (Pandas Series): data structure containing data about the best policy
+    dep (Pandas Series): data structure containing data about outcome of interest
     linmod (dict): a dictionary mapping the policy name to the corresponding coefficients
                    in the linear model, as well as the intercept and model r^2 score (output
                    from fws)
@@ -20,22 +16,22 @@ def scplot(dat, linmod):
     (Figure) The plotted model
     """
     #series containing predicted values for outcome
-    y_pred = dat.iloc[:,1].apply(lambda x: x * linmod[dat.columns[1]])
+    y_pred = dat.apply(lambda x: x * linmod[dep.name])
     
     #scatterplot with regression line
-    plt.plot(dat.iloc[:,1], y_pred)
-    plt.scatter(dat.iloc[:,1], dat.iloc[:,0])
-    plt.xlabel(dat.columns[1])
-    plt.ylabel(dat.columns[0])
-    plt.title("{a} vs. {b}".format(a = dat.columns[0], b = dat.columns[1]))
+    plt.plot(dat, y_pred)
+    plt.scatter(dat, dep)
+    plt.xlabel(dat.name)
+    plt.ylabel(dep.name)
+    plt.title("{a} vs. {b}".format(a = dat.name, b = dep.name))
 
 
 def dat_df(dat, title = None, color = "palegreen"):
     """
-    Takes in Pandas DataFrame and returns matplotlib table object
+    Takes in Pandas DataFrame/Series and returns matplotlib table object
 
     Inputs:
-    dat (Pandas DataFrame): A df with two columns
+    dat (Pandas DataFrame or Series): Data to represent as a table
     title (str): a string representing the title of the figure. Default is None
     color (str): a string representing a color for the row and column cells.
                  Default is pale green
@@ -46,10 +42,15 @@ def dat_df(dat, title = None, color = "palegreen"):
     fig, ax = plt.subplots() 
     ax.set_axis_off() 
     
-    #pandas function to convert pandas dataframe to matplotlib table
-    table = pd.plotting.table(ax, dat, rowColours = [color] * dat.shape[0], 
-                              colColours = [color] * dat.shape[1], 
-                              cellLoc ='center', loc ='upper left')
+
+    if len(dat.shape) > 1: #dataframe
+        table = pd.plotting.table(ax, dat, rowColours = [color] * dat.shape[0], 
+                                  colColours = [color] * dat.shape[1], 
+                                  cellLoc ='center', loc ='upper left')
+    else: #series
+        table = pd.plotting.table(ax, dat, rowColours = [color] * dat.shape[0], 
+                                  colColours = [color], cellLoc ='center', 
+                                  loc ='upper left')
     #may also customize colors by column/row but might not be aesthetic
 
     if title:
