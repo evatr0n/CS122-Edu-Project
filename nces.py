@@ -240,7 +240,7 @@ def raw_data(dfs):
         if i == 1:
             raw = first_frame.join(dfs[i])
         else:
-            raw.join(dfs[i])
+            raw = raw.join(dfs[i])
     return raw
 
 raw = raw_data(dfs1).join(raw_data(dfs2))
