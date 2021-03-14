@@ -17,11 +17,8 @@ def scplot(fig, dat, dep, coef):
     """
     ax = fig.add_subplot(111)
     ax.plot(dat, dep, ".", color = "b")
-    #axes = plt.gca()
-    #X_plot = np.linspace(axes.get_xlim()[0],axes.get_xlim()[1],100)
     ax.set_xlabel(dat.name)
     ax.set_ylabel(dep.name)
-    #ax.plot(X_plot, coef.loc[dat.name, "values"]*X_plot + coef.loc["Intercept", "values"], '-')
     ax.plot(dat, coef.loc[dat.name, "values"]*dat + coef.loc["Intercept", "values"], '-')
 
     return ax
