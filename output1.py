@@ -29,13 +29,13 @@ nctqdic_filled = nctq.fill_na(nctqdic_original)
 avg_nctq = nctq.average_df(nctqdic_filled).sort_index()  
 centered_avg_nctq = nctq.center_df(avg_nctq)
 
-
+"""
 return_dict = {"IL": [50, "Pay Scales (Retaining Effective Teachers Policy)", "Academic Requirements (Early Childhood Preparation Policy)"], 
         "CA": [75, "Pension Flexibility (Retaining Effective Teachers Policy)", "Induction (Retaining Effective Teachers Policy)"],
         "NY": [90, "Pension Flexibility (Retaining Effective Teachers Policy)", "Induction (Retaining Effective Teachers Policy)"]}
 outcomes = ['Trend: Average Daily Attendance %', 'Trend: Students Enrolled in Gifted Programs %', 'Trend: Average Base Teacher Salary w/ Bachelors']
 #'Trend: Average Base Teacher Salary w/ Masters Constant Dollars', 'Trend: Teacher Percentage of School Staff', 'Trend: Average Freshman Graduation Rate', 'Trend: 4th Grade Reading Scores', 'Trend: 8th Grade Math Scores', 'Trend: 4th Grade Math Scores', 'Trend: Overall Average Teacher Salary', 'Trend: % of Public Schools That Are Charters', 'Trend: Adjusted Cohort Graduation Rate']
-
+"""
 
 class Output1:
     def __init__(self, master, return_dict, outcomes):
@@ -98,7 +98,7 @@ class miniFrame:
         info_frame = tk.Frame(self.state_frame, bg = "green")
         info_frame.pack(anchor="n", fill="x", expand=False)
         state_text = "State: " + self.state
-        score_text = "Score:\n\n" + str(self.score) + "th percentile"
+        score_text = "Score:\n\n" + str(self.score) + "%"
         best_pol_text = "The most effective policy for " + self.state + " was:\n\n" + self.best_policy
         least_pol_text = "The least effective policy for " + self.state + " was:\n\n" + self.worst_policy
         state_label = ttk.Label(info_frame, text=state_text, anchor="center", font=("Helvetica", 20), background="light green").grid(column = 0, row = 1, padx = 25, pady = 25, columnspan= 2, sticky="nw")
@@ -115,26 +115,19 @@ class miniFrame:
         sub_canvas_frame = tk.Frame(canvas)
 
         for outcome in self.outcomes:
-            figure = plt.Figure(figsize=(5,4), dpi=100)
             outcome_series = nces_trends[outcome]
             best_pol_series = avg_nctq[self.best_policy]
-            #best_pol_series_abbr = ui_plot.abbrev_names(best_pol_series)
             rr_df = br.run_regression(best_pol_series, outcome_series, trend=True)
-            #plot = ui_plot.scplot(best_pol_series_abbr, outcome_series, rr_df)
-            ax = figure.add_subplot(111)
-            ax.scatter(best_pol_series, outcome_series, color = 'g')
-            scatter = FigureCanvasTkAgg(figure, sub_canvas_frame) 
-            scatter.get_tk_widget().pack(side=tk.LEFT, padx = 20, pady = 10)
+            fig = plt.Figure(figsize=(5,4), dpi=100)
+            ax = ui_plot.scplot(fig, best_pol_series, outcome_series, rr_df)
+            fig_canvas = FigureCanvasTkAgg(fig, master=sub_canvas_frame)
+            fig_canvas.draw()
+            fig_canvas.get_tk_widget().pack(side=tk.LEFT, padx = 20, pady = 10)
             ax.legend(['State']) 
             ax.set_xlabel(best_pol_series.name, labelpad=15)
             ax.set_ylabel(outcome_series.name, labelpad=15)
             ax.set_title("{a} vs. {b}".format(a = self.state + "'s Best Policy", b = "Trend Outcome"))
-            # axes = plt.gca()
-            # m, b = np.polyfit(best_pol_series, outcome_series, 1)
-            # X_plot = np.linspace(axes.get_xlim()[0],axes.get_xlim()[1],100)
-            # plt.plot(X_plot, m*X_plot + b, '-')
-
-            figure.tight_layout(pad=3.0, w_pad=4.5, h_pad=3.0)
+            fig.tight_layout(pad=3.0, w_pad=4.5, h_pad=3.0)
 
         #canvas = FigureCanvasTkAgg(figure, master = plots_frame)
         #canvas.get_tk_widget().pack(side=tk.LEFT, padx = 20, pady = 10)
@@ -149,7 +142,7 @@ class miniFrame:
         plots_scrollbarh.grid(column = 0, row = 1, sticky = "NWE")
 
 
-
+"""
 # for testing purposes
 def main(): #run mianloop 
     master = tk.Tk()
@@ -164,3 +157,4 @@ def main(): #run mianloop
 
 if __name__ == '__main__':
     main()
+"""
