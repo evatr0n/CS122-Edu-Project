@@ -40,7 +40,6 @@ outcomes = ['Trend: Average Daily Attendance %', 'Trend: Students Enrolled in Gi
 class Output1:
     def __init__(self, master, return_dict, outcomes):
         self.master = master
-        self.master.attributes("-fullscreen", True)
         self.return_dict = return_dict
         self.states = return_dict.keys()
         self.outcomes = outcomes
