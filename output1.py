@@ -75,10 +75,9 @@ class Output1:
         for state in self.states:
             new_frame = miniFrame(state, self.return_dict, all_states_frame, self.outcomes)
         # call miniFrame class to build as many of those as there are states
-        pass
 
     def close_windows(self):
-        self.master.quit()
+        self.master.destroy()
     
 class miniFrame:
     def __init__(self, state, return_dict, all_states_frame, outcomes):
