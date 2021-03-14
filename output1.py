@@ -1,19 +1,18 @@
-# output1.py
+# output1.py, the tkinter window the user input options 1 and 2
 
 import tkinter as tk
 from tkinter import ttk
 import pandas as pd
-#import matplotlib
-from ui_util import VerticalScrolledFrame
-#from ui_util import DoubleScrollbarFrame
-import ui_plot
-import default_stat_analysis as dsa
-import nctq
-import os
-import basic_regression as br
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
+import os
+
+from ui_util import VerticalScrolledFrame
+import ui_plot
+import default_stat_analysis as dsa
+import nctq
+import basic_regression as br
 
 # Import the nces data
 nces_final = pd.read_csv("csv/nces_final.csv", index_col=0)
@@ -29,15 +28,12 @@ nctqdic_filled = nctq.fill_na(nctqdic_original)
 avg_nctq = nctq.average_df(nctqdic_filled).sort_index()  
 centered_avg_nctq = nctq.center_df(avg_nctq)
 
-"""
-return_dict = {"IL": [50, "Pay Scales (Retaining Effective Teachers Policy)", "Academic Requirements (Early Childhood Preparation Policy)"], 
-        "CA": [75, "Pension Flexibility (Retaining Effective Teachers Policy)", "Induction (Retaining Effective Teachers Policy)"],
-        "NY": [90, "Pension Flexibility (Retaining Effective Teachers Policy)", "Induction (Retaining Effective Teachers Policy)"]}
-outcomes = ['Trend: Average Daily Attendance %', 'Trend: Students Enrolled in Gifted Programs %', 'Trend: Average Base Teacher Salary w/ Bachelors']
-#'Trend: Average Base Teacher Salary w/ Masters Constant Dollars', 'Trend: Teacher Percentage of School Staff', 'Trend: Average Freshman Graduation Rate', 'Trend: 4th Grade Reading Scores', 'Trend: 8th Grade Math Scores', 'Trend: 4th Grade Math Scores', 'Trend: Overall Average Teacher Salary', 'Trend: % of Public Schools That Are Charters', 'Trend: Adjusted Cohort Graduation Rate']
-"""
 
 class Output1:
+    """
+    Constructor for the output window class that takes in a tkinter root object, the return_dict from input_interface's
+    call to this class, and the list of outcomes that correspond to the user input
+    """
     def __init__(self, master, return_dict, outcomes):
         self.master = master
         self.return_dict = return_dict
@@ -52,13 +48,16 @@ class Output1:
             height= self.screen_height,
             width= self.screen_width
         )
-        # self.frame = DoubleScrollbarFrame(self.master)
         self.title_frame()
         self.build_miniFrames()
         self.frame.pack()
-       # self.frame.pack(side="top", fill="both", expand=True)
+
 
     def title_frame(self):
+        """
+        Function that creates frame that holds the header for the window.
+        This includes a short description and quit button to destroy the page
+        """
         title_frame = tk.Frame(self.frame, bg = "light blue")
         title_frame.pack(anchor="n", fill="x", expand=False)
         text = tk.Text(title_frame, height = 10, bg = "light blue", font=("Helvetica", 14), bd = 0, relief = tk.FLAT, wrap = tk.WORD)
@@ -66,11 +65,18 @@ class Output1:
         intro = "This is a general description of how the default calc works"
         text.insert(tk.END, intro)
         text.configure(state='disabled')
-
+        # Quit button widget
         quitButton = tk.Button(title_frame, text = 'Quit', width = 25, command = self.close_windows)
         quitButton.grid(column = 1, row = 0, sticky="e")
+        quit_label = ttk.Label(title_frame, text = "Note: quitting may take awhile if you have many plots").grid(column = 1,  
+                row = 1, padx = 35, pady = 25, sticky="ne") 
+
 
     def build_miniFrames(self):
+        """
+        This function calls upon the miniFrame class to create a new frame for each state that the user wants 
+        to visualize
+        """
         all_states_frame = tk.Frame(self.frame, bg = "blue")
         all_states_frame.pack(anchor="n", fill="x", expand=False)
         for state in self.states:
@@ -82,6 +88,14 @@ class Output1:
     
 class miniFrame:
     def __init__(self, state, return_dict, all_states_frame, outcomes):
+        """
+        Constructor that creates a new miniFrame for each state and calls the functions in this class
+        Inputs: state: name of a state
+                return_dict: the return from the input_interface that holds information for each state
+                            as a dict: {state: [score, best policy, worst policy]}
+                all_states_frame: the main frame to put the miniframe in
+                outcomes: return from input_interface with list of outcomes user cares about
+        """
         self.state_frame = tk.Frame(all_states_frame, bg = "green")
         self.state_frame.pack(anchor="n", fill="x", expand=False)
         self.return_dict = return_dict
@@ -93,7 +107,11 @@ class miniFrame:
         self.info_frame()
         self.plots_frame()
 
+
     def info_frame(self):
+        """
+        Frame that displays the state's score, best and worst policies
+        """
         info_frame = tk.Frame(self.state_frame, bg = "green")
         info_frame.pack(anchor="n", fill="x", expand=False)
         state_text = "State: " + self.state
@@ -107,12 +125,16 @@ class miniFrame:
 
 
     def plots_frame(self):
+        """
+        Frame that displays the state's scatterplots of its best policy vs each outcome the user said they care about
+        """
         plots_frame = tk.Frame(self.state_frame, bg = "light blue")
         plots_frame.pack(anchor="n", fill="x", expand=False)
         canvas = tk.Canvas(plots_frame, width=1300, height=400)
         canvas.grid(column = 0, row = 0)
         sub_canvas_frame = tk.Frame(canvas)
 
+        # Each iteration creates and places a new scatterplot
         for outcome in self.outcomes:
             outcome_series = nces_trends[outcome]
             best_pol_series = avg_nctq[self.best_policy]
@@ -121,39 +143,19 @@ class miniFrame:
             ax = ui_plot.scplot(fig, best_pol_series, outcome_series, rr_df)
             fig_canvas = FigureCanvasTkAgg(fig, master=sub_canvas_frame)
             fig_canvas.draw()
-            fig_canvas.get_tk_widget().pack(side=tk.LEFT, padx = 20, pady = 10)
-            ax.legend(['State']) 
+            fig_canvas.get_tk_widget().pack(side=tk.LEFT, padx = 20, pady = 20)
+            ax.legend(['Each state']) 
             ax.set_xlabel(best_pol_series.name, labelpad=15)
             ax.set_ylabel(outcome_series.name, labelpad=15)
             ax.set_title("{a} vs. {b}".format(a = self.state + "'s Best Policy", b = "Trend Outcome"))
-            fig.tight_layout(pad=3.0, w_pad=4.5, h_pad=3.0)
-
-        #canvas = FigureCanvasTkAgg(figure, master = plots_frame)
-        #canvas.get_tk_widget().pack(side=tk.LEFT, padx = 20, pady = 10)
+            fig.tight_layout(pad=3.0, w_pad=4.5, h_pad=4.0)
 
         canvas.create_window(0, 0, window = sub_canvas_frame, anchor = "nw")
         plots_frame.update()
-        #Adding horizontal scrollbar to policies listbox
+
+        #Adding horizontal scrollbar to canvas that holds the plots
         plots_scrollbarh = tk.Scrollbar(plots_frame, orient="horizontal")
         plots_scrollbarh.config(command=canvas.xview)
         canvas.config(xscrollcommand=plots_scrollbarh.set)
         canvas.configure(scrollregion=canvas.bbox("all"))
         plots_scrollbarh.grid(column = 0, row = 1, sticky = "NWE")
-
-
-"""
-# for testing purposes
-def main(): #run mianloop 
-    master = tk.Tk()
-    #getting screen width and height of display 
-    screen_width = master.winfo_screenwidth()  #in pixels
-    screen_height= master.winfo_screenheight() #in pixels
-    #setting tkinter window size 
-    master.geometry("%dx%d" % (screen_width, screen_height))
-    master.title("Output1")
-    app = Output1(master, return_dict, outcomes)
-    master.mainloop()
-
-if __name__ == '__main__':
-    main()
-"""
