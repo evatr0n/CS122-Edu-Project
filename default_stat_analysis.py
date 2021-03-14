@@ -4,6 +4,7 @@ import numpy as np
 import fws
 import basic_regression
 import math
+from scipy import stats
 
 # project_hq will know the user input:
 #   which year of policies df to get
@@ -92,6 +93,14 @@ def get_scores(states_overall_effectiveness_score, state_to_policy_effectiveness
     # use a ranking system that ranks a given state's score in relation to the other states'
     # for example this state's score is in what percentile of states' overall_effectiveness scores
     # take out US average. Compare score with US average. 
+
+    """
+    x = states_overall_effectiveness_score.values()
+    new_scores = [stats.percentileofscore(x, a, 'weak') for a in x]
+    for state in states_overall_effectiveness_score.keys():
+        for new_score in new_scores:
+            states_overall_effectiveness_score[state] = new_score
+    """
 
     score = states_overall_effectiveness_score[state]
     policy_to_eff = state_to_policy_effectiveness_score[state]
