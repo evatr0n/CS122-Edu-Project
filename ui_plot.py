@@ -1,8 +1,33 @@
 from matplotlib import pyplot as plt
 import pandas as pd
 import re
+import numpy as np
 
-def scplot(dat, dep, coef):
+def scplot(fig, dat, dep, coef):
+    """
+    Plots scatter plot with regression line
+
+    Inputs:
+    dat (Pandas Series): data structure containing data about the best policy
+    dep (Pandas Series): data structure containing data about outcome of interest
+    coef (Pandas DataFrame): output from basic_regression.run_regression()
+
+    Outputs:
+    (Figure) The plotted model
+    """
+    ax = fig.add_subplot(111)
+    ax.plot(dat, dep, ".", color = "b")
+    #axes = plt.gca()
+    #X_plot = np.linspace(axes.get_xlim()[0],axes.get_xlim()[1],100)
+    ax.set_xlabel(dat.name)
+    ax.set_ylabel(dep.name)
+    #ax.plot(X_plot, coef.loc[dat.name, "values"]*X_plot + coef.loc["Intercept", "values"], '-')
+    ax.plot(dat, coef.loc[dat.name, "values"]*dat + coef.loc["Intercept", "values"], '-')
+
+    return ax
+
+
+def scplot_firstdraft(dat, dep, coef):
     """
     Plots scatter plot with regression line
 
@@ -47,20 +72,20 @@ def dat_df(dat, title = None, color = "palegreen"):
     if len(dat.shape) > 1: #dataframe
         table = pd.plotting.table(ax, dat, rowColours = [color] * dat.shape[0], 
                                   colColours = [color] * dat.shape[1], 
-                                  cellLoc ='center', loc ='upper left')
+                                  cellLoc ='center', loc ='upper center')
     else: #series
         table = pd.plotting.table(ax, dat, rowColours = [color] * dat.shape[0], 
                                   colColours = [color], cellLoc ='center', 
-                                  loc ='upper left')
+                                  loc ='upper center')
     #may also customize colors by column/row but might not be aesthetic
 
     table.auto_set_font_size(False)
-    table.set_fontsize(8)
+    table.set_fontsize(11)
     table.auto_set_column_width(col=list(range(len(dat.columns))))
 
     if title:
         fig.suptitle(title) 
-    return table
+    return fig
 
     #should be noted that row labels default to the indices of the dataframe,
     #which would be states in the policy/outcome dfs. For the df with the 
