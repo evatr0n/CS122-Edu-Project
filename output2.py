@@ -51,7 +51,8 @@ class Output2:
                holds the coefficients and values of the variables. \n
             2. A plot of the most powerful explanatory variable in the selected policies
                against the outcome variable. \n
-            3. If mutliple variables are selected, a correlation matrix of the entire dataframe.
+            3. If mutliple variables are selected, a correlation matrix of all variables 
+               in the analysis.
         """
         exp = ttk.Label(title_frame, background = "pink", borderwidth = 5, font= ('Times', '16'), text = intro, relief = tk.GROOVE)
         exp.grid(column = 0, row = 1)
@@ -111,8 +112,13 @@ class Output2:
         tableframe = tk.Frame(corr_table_frame, bg = "purple")
         tableframe.grid(column=0, row=1)
         corr_df = pd.concat([self.y, self.x], axis = 1).corr()
+        corr_df.reset_index(level=0, inplace=True)
         table2 = pt = Table(tableframe, dataframe = corr_df, showtoolbar=False, showstatusbar=True)
         table2.show()
+        note = tk.Text(corr_table_frame, height = 1, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD, font=("Times", "13", "italic"))
+        note.tag_configure("tag_left", justify="left")
+        note.insert(tk.END, "*It is advisable to separate policies that are highly correlated among one another in an OLS analysis.", "tag_left")
+        note.grid(column = 0, row = 2, pady = 1)
         
 
     def close_windows(self):

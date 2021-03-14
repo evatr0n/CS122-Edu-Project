@@ -257,7 +257,7 @@ class Window1:
 
     def new_window2(self, outcome, policies):
         self.newWindow2 = tk.Toplevel(self.frame)
-        self.output2 = output2.Output2(self.newWindow2, outcome, policies)
+        self.output2 = output2.Output2(self.newWindow2, nces_final, avg_nctq, outcome, policies)
 
 
     def bottom_frame(self):
@@ -274,6 +274,7 @@ class Window1:
         button3 = tk.Button(bottom_frame, text="Click here to see descriptions of what ideal policies look like according to NCTQ", pady=20, wraplength=250, width = 30)
         button3.place(rely=0.4, relx=0.7)
         button3.bind("<Button>", lambda e: NewWindow("csv/policydesc_dic.json", self.frame))
+
 
 def main(): #run mianloop 
     root = tk.Tk()
