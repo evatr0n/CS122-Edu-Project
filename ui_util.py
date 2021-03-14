@@ -122,9 +122,22 @@ class DoubleScrollbarFrame(ttk.Frame):
     return self.canvas
 """
 
-class NewWindow(Toplevel): 
-      
+class NewWindow(Toplevel):
+    '''
+    This class was built to allow a new window to open with information uploaded
+    from a csv or json present in the new window. It was utilized to allow a 
+    user of our program to see the underlying data affecting our outputs.
+
+
+
+    adapted from https://www.geeksforgeeks.org/open-a-new-window-with-a-button-in-python-tkinter/
+    and https://gist.github.com/RamonWill/0686bd8c793e2e755761a8f20a42c762
+    '''
     def __init__(self, file, master): 
+        '''
+        It initializes taking in a file location, which is a string containing
+        the directory of the desired file and the name of the master program.
+        '''
           
         super().__init__(master) 
         self.title("Underlying Data") 
@@ -134,6 +147,11 @@ class NewWindow(Toplevel):
     
     # Treeview Widget
     def fill_window(self):
+        '''
+        Fill window has information on the Treeview object that will fill up our
+        Toplevel window. It is made to fill up the whole window, allows a user
+        to scroll, and can load in json files and csv files.
+        '''
 
         tv1 = ttk.Treeview(self)
         tv1.place(relheight=1, relwidth=1) # set the height and width of the widget to 100% of its container (frame1).
@@ -170,5 +188,3 @@ class NewWindow(Toplevel):
             df_rows = df.to_numpy().tolist() # turns the dataframe into a list of lists
             for row in df_rows:
                 tv1.insert("", "end", values=row)
-# adapted from https://www.geeksforgeeks.org/open-a-new-window-with-a-button-in-python-tkinter/
-# and https://www.geeksforgeeks.org/open-a-new-window-with-a-button-in-python-tkinter/
