@@ -60,10 +60,13 @@ class Output1:
         """
         title_frame = tk.Frame(self.frame, bg = "light blue")
         title_frame.pack(anchor="n", fill="x", expand=False)
-        text = tk.Text(title_frame, height = 10, bg = "light blue", font=("Helvetica", 14), bd = 0, relief = tk.FLAT, wrap = tk.WORD)
+        text = tk.Text(title_frame, height = 8, bg = "light blue", font=("Helvetica", 13), bd = 0, relief = tk.FLAT, wrap = tk.WORD)
         text.grid(column = 0, row = 0)
-        intro = "This is a general description of how the default calc works"
-        text.insert(tk.END, intro)
+        intro = "Here you will see a collection of information returned for each state you wished you consider."
+        note1 = "The score represents the percentage at which your given state's educational wellbeing is at relative to the highest in America."
+        note2 = "You will also see which policies were most and least effective in your state's overall educational outcomes."
+        note3 = "Below will be a series of scatterplots with regression lines, visualizing how that state's best policy correlates with each outcome variable available."
+        text.insert(tk.END, intro + "\n"*2 + note1 + "\n"*2 + note2 + "\n"*2 + note3)
         text.configure(state='disabled')
         # Quit button widget
         quitButton = tk.Button(title_frame, text = 'Quit', width = 25, command = self.close_windows)
