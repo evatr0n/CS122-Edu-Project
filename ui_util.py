@@ -1,9 +1,10 @@
 # utilities for user-interface.py 
 
-try:
-    import tkinter as tk
-except ImportError:
-    import Tkinter as tk
+import tkinter as tk
+from tkinter import ttk
+import pandas as pd
+from tkinter import Toplevel
+import json
 
 class VerticalScrolledFrame:
     """
@@ -74,3 +75,55 @@ class VerticalScrolledFrame:
     def __str__(self):
         return str(self.outer)
 # Taken from https://gist.github.com/novel-yet-trivial/3eddfce704db3082e38c84664fc1fdf8
+
+
+class NewWindow(Toplevel): 
+      
+    def __init__(self, file, master): 
+          
+        super().__init__(master) 
+        self.title("Underlying Data") 
+        self.geometry("1000x500")
+        self.file = file 
+        self.fill_window() 
+    
+    # Treeview Widget
+    def fill_window(self):
+
+        tv1 = ttk.Treeview(self)
+        tv1.place(relheight=1, relwidth=1) # set the height and width of the widget to 100% of its container (frame1).
+
+        treescrolly = tk.Scrollbar(self, orient="vertical", command=tv1.yview) # command means update the yaxis view of the widget
+        treescrollx = tk.Scrollbar(self, orient="horizontal", command=tv1.xview) # command means update the xaxis view of the widget
+        tv1.configure(xscrollcommand=treescrollx.set, yscrollcommand=treescrolly.set) # assign the scrollbars to the Treeview Widget
+        treescrollx.pack(side="bottom", fill="x") # make the scrollbar fill the x axis of the Treeview widget
+        treescrolly.pack(side="right", fill="y") # make the scrollbar fill the y axis of the Treeview widget
+        
+        if self.file[-4:] == "json":
+            with open(self.file) as f:
+                data = json.load(f)
+            data1 = list(data.keys())
+            data2 = list(data.values())
+            df_data = {"Policy Type": data1, "Description of High Quality Policy": data2}
+            df = pd.DataFrame(data=df_data)
+            tv1["column"] = list(df.columns)
+            tv1["show"] = "headings"
+            for column in tv1["columns"]:
+                tv1.heading(column, text=column) # let the column heading = column name
+
+            df_rows = df.to_numpy().tolist() # turns the dataframe into a list of lists
+            for row in df_rows:
+                tv1.insert("", "end", values=row) # inserts each list into the treeview. For parameters see https://docs.python.org/3/library/tkinter.ttk.html#tkinter.ttk.Treeview.insert
+        else:
+            df = pd.read_csv(self.file)
+
+            tv1["column"] = list(df.columns)
+            tv1["show"] = "headings"
+            for column in tv1["columns"]:
+                tv1.heading(column, text=column) # let the column heading = column name
+
+            df_rows = df.to_numpy().tolist() # turns the dataframe into a list of lists
+            for row in df_rows:
+                tv1.insert("", "end", values=row)
+# adapted from https://www.geeksforgeeks.org/open-a-new-window-with-a-button-in-python-tkinter/
+# and https://www.geeksforgeeks.org/open-a-new-window-with-a-button-in-python-tkinter/
