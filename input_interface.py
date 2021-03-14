@@ -11,6 +11,7 @@ import output1
 import output2
 import default_stat_analysis as dsa
 from ui_util import VerticalScrolledFrame
+from ui_util import NewWindow
 
 # Import the nces data
 nces_final = pd.read_csv("csv/nces_final.csv", index_col=0)
@@ -59,6 +60,7 @@ class Window1:
         self.fws_nondefault_frame()
         self.special_opt_frame()
         self.scrollbar()
+        self.bottom_frame()
     
     def welcome_frame(self):
         welcome_frame = tk.Frame(self.frame, bg = "pink")
@@ -257,6 +259,21 @@ class Window1:
         self.newWindow2 = tk.Toplevel(self.frame)
         self.output2 = output2.Output2(self.newWindow2, outcome, policies)
 
+
+    def bottom_frame(self):
+        bottom_frame = tk.Frame(self.frame, bg = "gold2")
+        bottom_frame.pack(expand=True, fill='x')
+        button1_label = ttk.Label(bottom_frame, text = "").grid(column = 0,  
+        row = 0, pady = 75)
+        button1 = tk.Button(bottom_frame, text="Click here to see the education outcome data we utilized to calculate our scores", pady=20, wraplength=250, width = 30)
+        button1.place(rely=0.4, relx=0.1)
+        button1.bind("<Button>", lambda e: NewWindow("csv/nces_final.csv", self.frame))
+        button2 = tk.Button(bottom_frame, text="Click here to see the policy grades we utilized to calculate our scores", pady=20, wraplength=250, width = 30)
+        button2.place(rely=0.4, relx=0.4)
+        button2.bind("<Button>", lambda e: NewWindow("csv/average_scores.csv", self.frame))
+        button3 = tk.Button(bottom_frame, text="Click here to see descriptions of what ideal policies look like according to NCTQ", pady=20, wraplength=250, width = 30)
+        button3.place(rely=0.4, relx=0.7)
+        button3.bind("<Button>", lambda e: NewWindow("csv/policydesc_dic.json", self.frame))
 
 def main(): #run mianloop 
     root = tk.Tk()
