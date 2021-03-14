@@ -60,7 +60,7 @@ class Output1:
         """
         title_frame = tk.Frame(self.frame, bg = "light blue")
         title_frame.pack(anchor="n", fill="x", expand=False)
-        text = tk.Text(title_frame, height = 8, bg = "light blue", font=("Helvetica", 13), bd = 0, relief = tk.FLAT, wrap = tk.WORD)
+        text = tk.Text(title_frame, height = 12, bg = "light blue", font=("Helvetica", 13), bd = 0, relief = tk.FLAT, wrap = tk.WORD)
         text.grid(column = 0, row = 0)
         intro = "Here you will see a collection of information returned for each state you wished you consider."
         note1 = "The score represents the percentage at which your given state's educational wellbeing is at relative to the highest in America."
