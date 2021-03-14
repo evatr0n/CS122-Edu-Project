@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.linear_model import LinearRegression
-#import statsmodels.formula.api as sm
+
 
 def run_regression(independent_df, dependent_df, trend=False):
     '''
@@ -34,8 +34,6 @@ def run_regression(independent_df, dependent_df, trend=False):
     else:
         var_names = independent_df.columns
     ols.fit(X, y)
-    #intercept = ols.intercept_
-    #R2 = ols.score(X, y)
     coef_df = pd.DataFrame(ols.coef_, var_names, columns=["values"])
     appendage = pd.DataFrame([ols.intercept_, ols.score(X, y)], ["Intercept", "R2"], columns=["values"])  #values = coefficients
 
@@ -76,10 +74,7 @@ def cutoff_R2(avg_nctq_df, dependent_df, R2, block_negative=False, trend=False):
                 policyr2.append(policy)
         else:
             if r2 > R2:
-                intercept = regression.loc["Intercept", "values"]
                 policyr2.append(policy)
-            #testing.append((policy, "intercept: {}".format{intercept}, "R2: {}".format{r2}))
-    #sorted(policyr2, key=lambda tup:tup[2])
 
     return policyr2
 
@@ -92,7 +87,8 @@ def find_max(policy_df, outcome_df):
     outcome_df (Pandas DataFrame): dataframe containing the outcomes data
     
     Returns:
-    (tuple of string, Pandas DataFrame): the best policy and the corresponding linear regression
+    (tuple of string, Pandas DataFrame): the best policy and the corresponding 
+    linear regression df
     """
     max_r2 = 0
     best_pol_reg = None
