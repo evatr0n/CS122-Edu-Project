@@ -34,10 +34,11 @@ def forward_selection(dat, dependent):
                                                         # at their mean values(since they are centralized) will likely be 0, or 
                                                         # constant without variation. This means we can safely assume intercept = 0.
 
-        forwards = SequentialFeatureSelector(fitted, n_features_to_select = 2, #number of independent variables
+        forwards = SequentialFeatureSelector(fitted, n_features_to_select = 2, 
                                              scoring = 'r2', 
                                              direction = 'forward').fit(dat, dependent)
-    
+        #number of independent variables is 2 because given the number of observations, 
+        # 2 independent variables runs lowest risk of overfitting
         #uses boolean mask to get selected variables
         fit_vars = np.array(dat.columns)[forwards.support_] 
         X_cut = dat[fit_vars] #only contains columns chosen by forward selection
