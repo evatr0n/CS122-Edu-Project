@@ -101,15 +101,18 @@ def get_scores(states_overall_effectiveness_score, state_to_policy_effectiveness
         for new_score in new_scores:
             states_overall_effectiveness_score[state] = new_score
     """
-    # dic = states_overall_effectiveness_score
-    # vals = list(dic.values())
-    # minimum = min(vals)
-    # maximum = max(vals)
-    # denom = maximum - minimum
-    # for key in dic.keys():
-    #     val = dic[key]
-    #     norm_val = (val - minimum) / denom
-    #     dic[key] = norm_val
+    dic = states_overall_effectiveness_score
+    vals = list(dic.values())
+    minimum = min(vals)
+    maximum = max(vals)
+    denom = maximum - minimum
+    for key in dic.keys():
+        if denom == 0:
+            dic[key] = 0.5
+        else:
+            val = dic[key]
+            norm_val = (val - minimum) / denom
+            dic[key] = norm_val
     score = states_overall_effectiveness_score[state]
     policy_to_eff = state_to_policy_effectiveness_score[state]
     best_policy = max(policy_to_eff.items(), key=lambda tup: tup[1])[0]
