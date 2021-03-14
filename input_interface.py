@@ -327,7 +327,7 @@ class Window1:
         button1.bind("<Button>", lambda e: NewWindow("csv/nces_final.csv", self.frame))
         button2 = tk.Button(bottom_frame, text="Click here to see the NCTQ policy grades we utilized in our calculations", pady=20, wraplength=250, width = 40)
         button2.grid(column = 1, row = 0, padx = 30, pady = 20)
-        button2.bind("<Button>", lambda e: NewWindow("csv/average_scores.csv", self.frame))
+        button2.bind("<Button>", lambda e: NewWindow("csv/avg_nctq.csv", self.frame))
         button3 = tk.Button(bottom_frame, text="Click here to see the policy descriptions according to the NCTQ", pady=20, wraplength=250, width = 40)
         button3.grid(column = 2, row = 0, padx = 30, pady = 20)
         button3.bind("<Button>", lambda e: NewWindow("csv/policydesc_dic.json", self.frame))
