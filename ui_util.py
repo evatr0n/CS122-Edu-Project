@@ -108,8 +108,12 @@ class NewWindow(Toplevel):
         Toplevel window. It is made to fill up the whole window, allows a user
         to scroll, and can load in json files and csv files.
         '''
-
-        tv1 = ttk.Treeview(self)
+        s = ttk.Style()
+        s.configure("Json.Treeview", rowheight = 55)
+        if self.file[-4:] == "json":
+            tv1 = ttk.Treeview(self, style="Json.Treeview")
+        else:
+            tv1 = ttk.Treeview(self)
         tv1.place(relheight=1, relwidth=1) # set the height and width of the widget to 100% of its container (frame1).
 
         treescrolly = tk.Scrollbar(self, orient="vertical", command=tv1.yview) # command means update the yaxis view of the widget
@@ -119,6 +123,7 @@ class NewWindow(Toplevel):
         treescrolly.pack(side="right", fill="y") # make the scrollbar fill the y axis of the Treeview widget
         
         if self.file[-4:] == "json":
+            tv1.place(relheight=1, relwidth=1)
             with open(self.file) as f:
                 data = json.load(f)
             data1 = list(data.keys())
@@ -129,10 +134,18 @@ class NewWindow(Toplevel):
             tv1["show"] = "headings"
             for column in tv1["columns"]:
                 tv1.heading(column, text=column) # let the column heading = column name
-
             df_rows = df.to_numpy().tolist() # turns the dataframe into a list of lists
             for row in df_rows:
+                print(row)
+                new_lst = row[1].split()
+                if len(new_lst) > 30:
+                    new_lst.insert(round(len(new_lst) / 3), "\n")
+                    new_lst.insert(round(2 * len(new_lst) / 3), "\n")
+                else:
+                    new_lst.insert(round(len(new_lst) / 2), "\n")
+                row[1] = " ".join(new_lst)
                 tv1.insert("", "end", values=row) # inserts each list into the treeview
+            
         else:
             df = pd.read_csv(self.file)
 
