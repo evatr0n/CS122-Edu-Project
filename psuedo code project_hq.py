@@ -1,10 +1,4 @@
-# psuedo code for project_hq
-
-# import NCES (2 dfs) and NCTQ dict of dfs 
-# 1 of NCES is filled NAN values, both are normalized
-# NCTQ NAN values are filled
-
-# remember to deal with the quartiles/reactive causation cases later
+# psuedo code for default_stat_analysis, one_pol_one_outcome.py and mult_pol_one_outcome.py
 
 ### corresponds to button 1 ###
 # Note: this will only be run once for the case of selecting all policies and all outcomes
@@ -12,7 +6,6 @@
 # and wants to get the score for another state or do a comparison where all outcomes are selected
 # keep these outputs stored so we do not run this function again 
 
-# have dictionary of dictionaries: if 
 """
 if user picks default: selects all policies, and either all or select outcomes
     for each outcome
