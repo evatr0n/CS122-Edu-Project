@@ -115,7 +115,7 @@ class NewWindow(Toplevel):
             for row in df_rows:
                 tv1.insert("", "end", values=row) # inserts each list into the treeview. For parameters see https://docs.python.org/3/library/tkinter.ttk.html#tkinter.ttk.Treeview.insert
         else:
-            df = pd.read_csv(self.file)
+            df = pd.read_csv(self.file, index_col = 0)
 
             tv1["column"] = list(df.columns)
             tv1["show"] = "headings"
