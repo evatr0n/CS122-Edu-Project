@@ -126,7 +126,7 @@ def average_df(dfdic_filled):
     df_average = df_average.groupby(by=df_average.columns, axis=1)
     df_average = df_average.apply(lambda g: g.mean(axis=1) \
                  if isinstance(g.iloc[0,0], numbers.Number) else g.iloc[:,0])
-    df_average.to_csv("csv/average_scores.csv")
+    df_average.to_csv("csv/avg_nctq.csv")
     
     return df_average
 

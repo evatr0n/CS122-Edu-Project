@@ -48,7 +48,7 @@ class Output2:
         This page shows the results of a regression between the selected variables. Below, you see: \n 
             1. A table containing the results of a simple or multilinear regression
                where the rows are each policy plus the intercept and R2, and the column
-               holds the coefficients and values of the variables. \n
+               holds the coefficients of each independent variable and the intercept, R2. \n
             2. A plot of the most powerful explanatory variable in the selected policies
                against the outcome variable. \n
             3. If mutliple variables are selected, a correlation matrix of all variables 
@@ -117,7 +117,7 @@ class Output2:
         table2.show()
         note = tk.Text(corr_table_frame, height = 1, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD, font=("Times", "13", "italic"))
         note.tag_configure("tag_left", justify="left")
-        note.insert(tk.END, "*It is advisable to separate policies that are highly correlated among one another in an OLS analysis.", "tag_left")
+        note.insert(tk.END, "*It is advisable to separate policies that are highly correlated with each other in an OLS analysis.", "tag_left")
         note.grid(column = 0, row = 2, pady = 1)
         
 
@@ -131,4 +131,5 @@ def test():
     output = Output2(root, nces, avg_nctq, "Trend: Average Daily Attendance %", avg_nctq.columns[:3])
     root.mainloop()
 
-test()
+if __name__ == '__main__':
+    test()

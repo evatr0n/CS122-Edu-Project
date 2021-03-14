@@ -10,8 +10,11 @@ import nctq
 import output1
 import output2
 import default_stat_analysis as dsa
+import basic_regression as b
 from ui_util import VerticalScrolledFrame
 from ui_util import NewWindow
+
+
 
 # Import the nces data
 nces_final = pd.read_csv("csv/nces_final.csv", index_col=0)
@@ -59,7 +62,8 @@ class Window1:
         self.default_opt_frame()
         self.fws_nondefault_frame()
         self.special_opt_frame()
-        self.scrollbar()
+        #self.scrollbar()
+        self.r2_cutoff_frame()
         self.bottom_frame()
     
     def welcome_frame(self):
@@ -148,7 +152,7 @@ class Window1:
 
         # Adding calculate button widget 
         button = tk.Button(fws_nondefault_frame, text="Calculate!", bd = "5", command=self.retrieve2)
-        button.grid(column = 4, row = 2)
+        button.grid(column = 4, row = 2, padx = 35, pady = 25)
 
         for i, outcome in enumerate(trend_outcomes): 
     
@@ -160,7 +164,7 @@ class Window1:
         special_opt_frame.pack(expand=True, fill='x')
         #grid(column = 0, row = 3)
         # Label 
-        option3_label = ttk.Label(special_opt_frame, text = "Retrieve information on how particular policies interact with a given outcome: ").grid(column = 0,  
+        option3_label = ttk.Label(special_opt_frame, text = "Option 3: Retrieve information on how particular policies interact with a given outcome: ").grid(column = 0,  
         row = 0, padx = 35, pady = 25)
 
         ttk.Label(special_opt_frame, text = "Select one outcome to investigate:").grid(column = 0,  
@@ -193,12 +197,52 @@ class Window1:
 
          # Adding calculate button widget 
         button = tk.Button(special_opt_frame, text="Calculate!", bd = "5", command=self.retrieve3)
-        button.grid(column = 4, row = 2)
+        button.grid(column = 4, row = 2, padx = 35, pady = 25)
 
         for i, policy in enumerate(avg_nctq.columns): 
       
             self.policies3_listbox.insert(tk.END, policy) 
             self.policies3_listbox.itemconfig(i, bg = "deep sky blue") 
+        
+    def r2_cutoff_frame(self):
+        r2_frame = tk.Frame(self.frame, bg = "orange")
+        r2_frame.pack(expand=True, fill='x')
+        #grid(column = 0, row = 3)
+        # Label 
+        r2_label = ttk.Label(r2_frame, text = "Helper tool: Choose an outcome and R2 value to find policies with a correlation greater than the given R2").grid(column = 0,  
+        row = 0, padx = 35, pady = 25, columnspan = 2, sticky = "w")
+
+        ttk.Label(r2_frame, text = "Select one outcome to investigate:").grid(column = 0,  
+                row = 1, padx = 35, pady = 25)
+        outcome_combo = tk.StringVar() 
+        self.r2outcomes_combobox = ttk.Combobox(r2_frame, width = 27,  
+                                    textvariable = outcome_combo, exportselection=0)
+        self.r2outcomes_combobox['values'] = outcomes 
+        self.r2outcomes_combobox.grid(column = 0, row = 2, padx = 35, pady = 25, rowspan =2) 
+
+        # r2 value entry box
+        r2_label = ttk.Label(r2_frame, text = "Enter an R2 value (number):").grid(column = 1,  
+                row = 1, padx = 35, pady = 25, columnspan = 2) 
+
+        # policies Selection listbox widget
+        self.entry = tk.StringVar()
+        r2_entry = tk.Entry(r2_frame, exportselection = False, width=5, relief=tk.SUNKEN, textvariable = self.entry)
+        r2_entry.grid(column = 1, row = 2)
+
+        # Adding textbox that returns policies
+        self.r2_textbox = tk.Text(r2_frame, height = 5, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
+        self.r2_textbox.grid(column = 1, row = 3, padx = 0, pady = 25)
+
+        # Adding vertical scrollbar to textbox
+        textbox_scrollbar = tk.Scrollbar(r2_frame)
+        textbox_scrollbar.config(command=self.r2_textbox.yview)
+        self.r2_textbox.config(yscrollcommand=textbox_scrollbar.set)
+        textbox_scrollbar.grid(column=2, row=3, pady = 25, sticky='NSW')
+
+
+         # Adding calculate button widget 
+        button = tk.Button(r2_frame, text="Submit", bd = "5", command=self.retrieve4)
+        button.grid(column = 4, row = 2, padx= 35, pady = 25)
         
 
     def scrollbar(self):
@@ -248,7 +292,22 @@ class Window1:
         print("outcome: " + str(outcome))
         print("policies" + str(policies))
         self.new_window2(outcome, policies)
-    
+
+    def retrieve4(self):
+        outcome = self.r2outcomes_combobox.get()
+        self.r2_textbox.delete(1.0, tk.END)
+        try:
+            r2 = float(self.entry.get())
+            policies = b.cutoff_R2(avg_nctq, nces_final[outcome], r2)
+            print(policies)
+            if policies:
+                self.r2_textbox.insert(tk.END, "\n".join(policies))
+            else: 
+                self.r2_textbox.insert(tk.END, "No such policies found")
+
+        except Exception:
+            self.r2_textbox.insert(tk.END, "Please insert a number for the R2")
+        
 
     def new_window1(self, return_dict, outcomes):
         self.newWindow1 = tk.Toplevel(self.frame)
@@ -271,7 +330,7 @@ class Window1:
         button2 = tk.Button(bottom_frame, text="Click here to see the policy grades we utilized to calculate our scores", pady=20, wraplength=250, width = 30)
         button2.place(rely=0.4, relx=0.4)
         button2.bind("<Button>", lambda e: NewWindow("csv/average_scores.csv", self.frame))
-        button3 = tk.Button(bottom_frame, text="Click here to see descriptions of what ideal policies look like according to NCTQ", pady=20, wraplength=250, width = 30)
+        button3 = tk.Button(bottom_frame, text="Click here to see the policy descriptions according to NCTQ", pady=20, wraplength=250, width = 30)
         button3.place(rely=0.4, relx=0.7)
         button3.bind("<Button>", lambda e: NewWindow("csv/policydesc_dic.json", self.frame))
 
