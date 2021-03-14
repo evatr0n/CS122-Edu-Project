@@ -17,9 +17,9 @@ from ui_util import NewWindow
 
 
 # Import the nces data
-nces_final = pd.read_csv("csv/nces_final.csv", index_col=0)
+nces_final = pd.read_csv("csv/nces_final.csv")
 nces_trends = nces_final[[col for col in nces_final.columns if col.startswith("Trend")]]
-nces_original = pd.read_csv("csv/nces_raw.csv", index_col=0)
+nces_original = pd.read_csv("csv/nces_raw.csv")
 
 # Import the nctq data
 nctqdic_original = {}
