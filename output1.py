@@ -5,6 +5,7 @@ from tkinter import ttk
 import pandas as pd
 #import matplotlib
 from ui_util import VerticalScrolledFrame
+#from ui_util import DoubleScrollbarFrame
 import ui_plot
 import default_stat_analysis as dsa
 import nctq
@@ -52,6 +53,7 @@ class Output1:
             height= self.screen_height,
             width= self.screen_width
         )
+        # self.frame = DoubleScrollbarFrame(self.master)
         self.title_frame()
         self.build_miniFrames()
         self.frame.pack()
