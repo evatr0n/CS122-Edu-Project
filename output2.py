@@ -59,13 +59,19 @@ class Output2:
         #exp.insert(tk.END, intro)
         #exp.configure(state='disabled')
         reg_title = ttk.Label(title_frame, text = "Regression Details:", font = ("Ariel", "18", "bold"))
-        reg_title.grid(column=0, row=2, padx = 35, pady = 25)
+        reg_title.grid(column=0, row=2, pady = 25)
         reg = tk.Text(title_frame, height = 10, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
         reg.grid(column = 0, row = 3)
         regression = "Running regression on:"
         eq = "{} ~ {}".format(self.outcome, " + ".join(self.policies))
         reg.insert(tk.END, regression + "\n" * 2 + "           " + eq)
         reg.configure(state='disabled')
+
+        # Adding vertical scrollbar to textbox
+        textbox_scrollbar = tk.Scrollbar(title_frame)
+        textbox_scrollbar.config(command=reg.yview)
+        reg.config(yscrollcommand=textbox_scrollbar.set)
+        textbox_scrollbar.grid(column=1, row=3, pady = 25, sticky='NSW')
 
     def plot_reg_table(self):
         reg_table_frame = tk.Frame(self.frame, bg = "green")
