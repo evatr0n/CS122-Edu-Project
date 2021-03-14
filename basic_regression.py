@@ -62,10 +62,10 @@ def cutoff_R2(avg_nctq_df, dependent_df, R2, block_negative=False, trend=False):
 
     return policyr2
 
-def find_max(lst_of_policy_names, policy_df, outcome_df):
+def find_max(policy_df, outcome_df):
     max_r2 = 0
     best_pol_reg = None
-    for policy in lst_of_policy_names:
+    for policy in policy_df.columns:
         reg = run_regression(policy_df[policy], outcome_df)
         r2 = reg.loc["R2", "values"]
         if r2 > max_r2:
