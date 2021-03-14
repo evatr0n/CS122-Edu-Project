@@ -321,17 +321,15 @@ class Window1:
 
     def bottom_frame(self):
         bottom_frame = tk.Frame(self.frame, bg = "gold2")
-        bottom_frame.pack(expand=True, fill='x')
-        button1_label = ttk.Label(bottom_frame, text = "").grid(column = 0,  
-        row = 0, pady = 75)
-        button1 = tk.Button(bottom_frame, text="Click here to see the education outcome data we utilized to calculate our scores", pady=20, wraplength=250, width = 30)
-        button1.place(rely=0.4, relx=0.1)
+        bottom_frame.pack(expand=True, fill='x', pady = (0, 70))
+        button1 = tk.Button(bottom_frame, text="Click here to see the NCES education outcome data we utilized in our calculations", pady=20, wraplength=250, width = 40)
+        button1.grid(column = 0, row = 0, padx = 30, pady = 20)
         button1.bind("<Button>", lambda e: NewWindow("csv/nces_final.csv", self.frame))
-        button2 = tk.Button(bottom_frame, text="Click here to see the policy grades we utilized to calculate our scores", pady=20, wraplength=250, width = 30)
-        button2.place(rely=0.4, relx=0.4)
+        button2 = tk.Button(bottom_frame, text="Click here to see the NCTQ policy grades we utilized in our calculations", pady=20, wraplength=250, width = 40)
+        button2.grid(column = 1, row = 0, padx = 30, pady = 20)
         button2.bind("<Button>", lambda e: NewWindow("csv/average_scores.csv", self.frame))
-        button3 = tk.Button(bottom_frame, text="Click here to see the policy descriptions according to NCTQ", pady=20, wraplength=250, width = 30)
-        button3.place(rely=0.4, relx=0.7)
+        button3 = tk.Button(bottom_frame, text="Click here to see the policy descriptions according to the NCTQ", pady=20, wraplength=250, width = 40)
+        button3.grid(column = 2, row = 0, padx = 30, pady = 20)
         button3.bind("<Button>", lambda e: NewWindow("csv/policydesc_dic.json", self.frame))
 
 
