@@ -28,13 +28,13 @@ nctqdic_filled = nctq.fill_na(nctqdic_original)
 avg_nctq = nctq.average_df(nctqdic_filled).sort_index()  
 centered_avg_nctq = nctq.center_df(avg_nctq)
 
-
+"""
 return_dict = {"IL": [50, "Pay Scales (Retaining Effective Teachers Policy)", "Academic Requirements (Early Childhood Preparation Policy)"], 
         "CA": [75, "Pension Flexibility (Retaining Effective Teachers Policy)", "Induction (Retaining Effective Teachers Policy)"],
         "NY": [90, "Pension Flexibility (Retaining Effective Teachers Policy)", "Induction (Retaining Effective Teachers Policy)"]}
 outcomes = ['Trend: Average Daily Attendance %', 'Trend: Students Enrolled in Gifted Programs %', 'Trend: Average Base Teacher Salary w/ Bachelors']
 #'Trend: Average Base Teacher Salary w/ Masters Constant Dollars', 'Trend: Teacher Percentage of School Staff', 'Trend: Average Freshman Graduation Rate', 'Trend: 4th Grade Reading Scores', 'Trend: 8th Grade Math Scores', 'Trend: 4th Grade Math Scores', 'Trend: Overall Average Teacher Salary', 'Trend: % of Public Schools That Are Charters', 'Trend: Adjusted Cohort Graduation Rate']
-
+"""
 
 class Output1:
     def __init__(self, master, return_dict, outcomes):
@@ -130,11 +130,11 @@ class miniFrame:
             # m, b = np.polyfit(best_pol_series, outcome_series, 1)
             # X_plot = np.linspace(axes.get_xlim()[0],axes.get_xlim()[1],100)
             # plt.plot(X_plot, m*X_plot + b, '-')
-            
+
             figure.tight_layout(pad=3.0, w_pad=4.5, h_pad=3.0)
 
 
-
+"""
 # for testing purposes
 def main(): #run mianloop 
     master = tk.Tk()
@@ -149,3 +149,4 @@ def main(): #run mianloop
 
 if __name__ == '__main__':
     main()
+"""
