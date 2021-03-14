@@ -209,7 +209,7 @@ class Window1:
         r2_frame.pack(expand=True, fill='x')
         #grid(column = 0, row = 3)
         # Label 
-        r2_label = ttk.Label(r2_frame, text = "Helper tool: Choose an outcome and R2 value to find policies with a correlation greater than the given R2").grid(column = 0,  
+        r2_label = ttk.Label(r2_frame, text = "Helper tool: Given a particular outcome, find all policies with a correlation greater than a given R2").grid(column = 0,  
         row = 0, padx = 35, pady = 25, columnspan = 2, sticky = "w")
 
         ttk.Label(r2_frame, text = "Select one outcome to investigate:").grid(column = 0,  
