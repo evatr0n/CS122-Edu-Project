@@ -23,6 +23,18 @@ grade_to_score_map = {"Best practice": 6, "Meets goal": 5, "Nearly meets goal": 
 
 
 def crawl_one_page_nctq(soup, nctq_page_url, policy_dic={}, policydesc_dic={}):
+    '''
+    Crawls one page of the NCTQ Teacher Policy Database, found here(=https://www.nctq.org/yearbook/home).
+    Modifies dictionary passed into it. 
+    Inputs: 
+      soup: soup object of webpage.
+      nctq_page_url: page url
+    Modifies:
+      policy_dic: dictionary of dictionaries of dictionaries mapping year -> 
+      policyname -> state -> policyscore. 
+      policydesc_dic: dictionary with poicy names as keys and their descriptions 
+      as values. 
+    '''
     grades_list = soup.find_all("span", class_="grade__status")
     citation = soup.find("div", class_ = "suggestedCitation")
 
@@ -46,10 +58,10 @@ def crawl_one_page_nctq(soup, nctq_page_url, policy_dic={}, policydesc_dic={}):
             for state in states:
                 statescoredic[state.text] = quant_score
                 total_score += quant_score
-                num_states += 1
+                num_states += 1  # for calculating US average
 
         policy_dic["nctq_{}".format(year)] = policy_dic.get("nctq_{}".format(year), {})
-        statescoredic["US"] = round(total_score / num_states, 2)
+        statescoredic["US"] = round(total_score / num_states, 2)  # adds a US average
         policy_dic["nctq_{}".format(year)][policyname] = statescoredic 
         policydesc_dic[policyname] = policydesc
         print(year, nctq_page_url, "read")
@@ -59,6 +71,14 @@ def crawl_one_page_nctq(soup, nctq_page_url, policy_dic={}, policydesc_dic={}):
 
 
 def crawl_nctq(source_url=home_url):
+    '''
+    Crawls entire nctq database starting from home url and 
+    creates a csv file in the csv directory for each year, 
+    the csv mapping states to policy scores per policy. 
+    Also saves a dictionary mapping policies to their descriptions in a 
+    json file. 
+    Returns dictionary of dataframes. 
+    '''
     limiting_domain = "nctq.org"
     prefix = "https://www.nctq.org/yearbook/national"
     source_soup = make_soup(source_url)
@@ -78,7 +98,7 @@ def crawl_nctq(source_url=home_url):
     
     for year, data in nctq.items():
         df_dic[year] = pd.DataFrame(data)
-        df_dic[year].to_csv("csv/{}.csv".format(year))
+        df_dic[year].to_csv("csv/{}.csv".format(year)) # csv output per year
     
     with open('csv/policydesc_dic.json', 'w') as fp:
         json.dump(policydesc_dic, fp)
@@ -172,6 +192,9 @@ def linked_urls(source_url, soup):
 
 
 def make_soup(myurl):
+    '''
+    Creates soup object given a url
+    '''
     if util.is_absolute_url(myurl):
         try: 
             pm = urllib3.PoolManager(
