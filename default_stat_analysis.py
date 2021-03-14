@@ -101,7 +101,9 @@ def get_scores(states_overall_effectiveness_score, state_to_policy_effectiveness
         for new_score in new_scores:
             states_overall_effectiveness_score[state] = new_score
     """
-
+    factor=1.0/sum(states_overall_effectiveness_score.values())
+    for key in state_to_policy_effectiveness_score.keys():
+        states_overall_effectiveness_score[key] = states_overall_effectiveness_score[key]*factor
     score = states_overall_effectiveness_score[state]
     policy_to_eff = state_to_policy_effectiveness_score[state]
     best_policy = max(policy_to_eff.items(), key=lambda tup: tup[1])[0]
