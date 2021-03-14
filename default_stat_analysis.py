@@ -85,6 +85,23 @@ def default_calc(average_nctq, centered_average_nctq, NCES_df, R2, block_negativ
     
 
 def get_scores(states_overall_effectiveness_score, state_to_policy_effectiveness_score, state):
+    """
+    Outputs state overall effectiveness score of input state from normalized state overall effectiveness scores.  
+    Also outputs the policies for that state with the highest (best) effectiveness score and the lowest (worst)
+    effectiveness score
+    
+    Inputs:
+    states_overall_effectiveness_score (dict): a dictionary of the form {state: overall effectiveness score};
+                                               output from default_calc
+    state_to_policy_effectiveness_score (dict): a dictionary of the form {state: {policy: score} }
+                                                output from default_calc
+    state (str): capitalized, two letter abbreviation for the state of interest
+    
+    Outputs:
+    (tuple) the state overall effectiveness score from the normalized overall effectiveness scores,
+            the best policy, and the worst policy
+    """
+    
     # for example this state's score is in what percentile of states' overall_effectiveness scores
     # get policy with best and worst effectiveness scores for the state
     # Compare to US average. 
@@ -101,15 +118,20 @@ def get_scores(states_overall_effectiveness_score, state_to_policy_effectiveness
         for new_score in new_scores:
             states_overall_effectiveness_score[state] = new_score
     """
-    # dic = states_overall_effectiveness_score
-    # vals = list(dic.values())
-    # minimum = min(vals)
-    # maximum = max(vals)
-    # denom = maximum - minimum
-    # for key in dic.keys():
-    #     val = dic[key]
-    #     norm_val = (val - minimum) / denom
-    #     dic[key] = norm_val
+    dic = states_overall_effectiveness_score
+    vals = list(dic.values())
+    minimum = min(vals)
+    maximum = max(vals)
+    denom = maximum - minimum
+    for key in dic.keys():
+        if denom == 0:
+            dic[key] = 50
+        else:
+            val = dic[key]
+            norm_val = (val - minimum) / denom
+            norm_val *= 100
+            norm_val = round(norm_val, 2)
+            dic[key] = norm_val
     score = states_overall_effectiveness_score[state]
     policy_to_eff = state_to_policy_effectiveness_score[state]
     best_policy = max(policy_to_eff.items(), key=lambda tup: tup[1])[0]
