@@ -93,6 +93,9 @@ def dat_df(dat, title = None, color = "palegreen"):
     #to remove them, since the row label would just be an integer index. 
 
 def abbrev_names(dat):
+    '''
+    Abbreviates names in a dataframe
+    '''
     abbrev_columns = {}
     abbrev_index = {}
     for col in dat.columns:

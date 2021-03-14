@@ -8,12 +8,15 @@ import ui_plot as u
 import nctq
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from pandastable import Table
-import numpy as np
+from pandastable import Table  # requires package download
+#import numpy as np
 
 
 class Output2:
     def __init__(self, master, nces, avg_nctq, outcome, policies):
+        '''
+        Constructor for Output2 class
+        '''
         self.master = master
         self.nces = nces
         self.nctq = avg_nctq
@@ -40,6 +43,9 @@ class Output2:
         self.frame.pack()
     
     def title_frame(self):
+        '''
+        Creates title frame with description of output page
+        '''
         title_frame = tk.Frame(self.frame, bg = "pink")
         title_frame.pack(expand=True, fill='x')
         exp_title = ttk.Label(title_frame, text = "Description of Output:", font = ("Ariel", "18", "bold"))
@@ -56,8 +62,8 @@ class Output2:
         """
         exp = ttk.Label(title_frame, background = "pink", borderwidth = 5, font= ('Times', '16'), text = intro, relief = tk.GROOVE)
         exp.grid(column = 0, row = 1)
-        #exp.insert(tk.END, intro)
-        #exp.configure(state='disabled')
+
+        # Writes out the full regression equation
         reg_title = ttk.Label(title_frame, text = "Regression Details:", font = ("Ariel", "18", "bold"))
         reg_title.grid(column=0, row=2, pady = 25)
         reg = tk.Text(title_frame, height = 10, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD)
@@ -74,53 +80,70 @@ class Output2:
         textbox_scrollbar.grid(column=1, row=3, pady = 25, sticky='NSW')
 
     def plot_reg_table(self):
+        '''
+        Plots the result of the OLS regression between the chosen policies 
+        and educational outcome as a table. 
+        '''
         reg_table_frame = tk.Frame(self.frame, bg = "green")
         reg_table_frame.pack(expand=True, fill="x")
+        # Formatting title of frame
         title = ttk.Label(reg_table_frame, text = "Regression Results on \n [{}]:".format(self.outcome), font = ("Ariel", "18", "bold"))
         title.grid(column=0, row = 0, padx = 35, pady = 25)
+        #Visualizing table
         tableframe = tk.Frame(reg_table_frame, bg = "green")
         tableframe.grid(column=0, row=1)
-        reg = b.run_regression(self.centered_x, self.y)
+        reg = b.run_regression(self.centered_x, self.y)  # regression results in df
         reg.reset_index(level=0, inplace=True)
         table = pt = Table(tableframe, dataframe = reg, showtoolbar=False, showstatusbar=True)
         table.show()
-        #table = u.dat_df(reg, self.outcome)
-        #table = u.dat_df(centered_nctq[self.policies].corr(), "Correlation Matrix", "orange")
-        #canvas = FigureCanvasTkAgg(table, master=reg_table_frame)
-        #canvas.draw()
-        #canvas.get_tk_widget().grid(column = 0, row = 1)
 
     def plot_scplot(self):
-        best_pol, best_pol_reg = b.find_max(self.centered_x, self.y)
+        '''
+        Plots a matplotlib scatterplot of the variable with the strongest
+        explanatory power (highest R2) and the chosen outcome variable, with
+        a regression line.
+        '''
+        best_pol, best_pol_reg = b.find_max(self.centered_x, self.y)  # policy with highest R2
         reg_plot_frame = tk.Frame(self.frame, bg = "blue")
         reg_plot_frame.pack(expand=True, fill="x")
+        # Title of frame
         title = ttk.Label(reg_plot_frame, text = "Plot of {} \n vs. \n{}:".format(self.outcome, best_pol), font = ("Ariel", "18", "bold"), justify=tk.CENTER)
         title.grid(column=0, row = 0, padx = 35, pady = 25)
+        # Frame for plot
         plotframe = tk.Frame(reg_plot_frame, bg = "blue")
         plotframe.grid(column=0, row=1)
+        # Plotting matplotlib object in canvas
         fig = plt.Figure(figsize=(5,4), dpi=100)
         ax = u.scplot(fig, self.x[best_pol], self.y, best_pol_reg)
-        #X_plot = self.nctq[best_pol]
-        #ax.plot(X_plot, best_pol_reg.loc[best_pol, "values"]*X_plot + best_pol_reg.loc["Intercept", "values"], '-')
         canvas = FigureCanvasTkAgg(fig, master=plotframe)
         canvas.draw()
         canvas.get_tk_widget().pack()
+        # Adding note
         note = tk.Text(reg_plot_frame, height = 1, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD, font=("Times", "13", "italic"))
         note.tag_configure("tag_left", justify="left")
         note.insert(tk.END, "*Intercept has been recalculated to show value when all other variables are held at mean value", "tag_left")
         note.grid(column = 0, row = 2, pady = 1)
 
     def plot_corr_df(self):
+        '''
+        Plots the correlation dataframe of the variables in the OLS regression.
+        '''
+        #Main Frame
         corr_table_frame = tk.Frame(self.frame, bg = "purple")
         corr_table_frame.pack(expand=True, fill="x")
+        # Title of frame
         title = ttk.Label(corr_table_frame, text = "Correlation Matrix:", font = ("Ariel", "18", "bold"))
         title.grid(column=0, row = 0, padx = 35, pady = 25)
+        # Frame to put table in
         tableframe = tk.Frame(corr_table_frame, bg = "purple")
         tableframe.grid(column=0, row=1)
+        # Create dataframe to visualize as table
         corr_df = pd.concat([self.y, self.x], axis = 1).corr()
         corr_df.reset_index(level=0, inplace=True)
+        # Visualize table
         table2 = pt = Table(tableframe, dataframe = corr_df, showtoolbar=False, showstatusbar=True)
         table2.show()
+        # Add note
         note = tk.Text(corr_table_frame, height = 1, bg = "white", bd = 0, relief = tk.FLAT, wrap = tk.WORD, font=("Times", "13", "italic"))
         note.tag_configure("tag_left", justify="left")
         note.insert(tk.END, "*It is advisable to separate policies that are highly correlated with each other in an OLS analysis.", "tag_left")
@@ -128,6 +151,9 @@ class Output2:
         
 
     def close_windows(self):
+        '''
+        Closes windows when user is done
+        '''
         self.master.destroy()
 
 def test():
