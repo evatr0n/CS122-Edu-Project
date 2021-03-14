@@ -350,7 +350,6 @@ class Window1:
         try:
             r2 = float(self.entry.get())
             policies = b.cutoff_R2(avg_nctq, nces_final[outcome], r2)
-            print(policies)
             if policies:
                 self.r2_textbox.insert(tk.END, "\n".join(policies))
             else: 
