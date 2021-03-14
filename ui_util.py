@@ -8,6 +8,8 @@ import json
 
 class VerticalScrolledFrame:
     """
+    Taken from https://gist.github.com/novel-yet-trivial/3eddfce704db3082e38c84664fc1fdf8
+
     A vertically scrolled Frame that can be treated like any other Frame
     ie it needs a master and layout and it can be a master.
     :width:, :height:, :bg: are passed to the underlying Canvas
@@ -76,62 +78,15 @@ class VerticalScrolledFrame:
         return str(self.outer)
 # Taken from https://gist.github.com/novel-yet-trivial/3eddfce704db3082e38c84664fc1fdf8
 
-"""
-class DoubleScrollbarFrame(ttk.Frame):
-
-  def __init__(self, master, **kwargs):
-    '''
-      Initialisation. The DoubleScrollbarFrame consist of :
-        - an horizontal scrollbar
-        - a  vertical   scrollbar
-        - a canvas in which the user can place sub-elements
-    '''
-
-    ttk.Frame.__init__(self,  master, **kwargs)
-
-    # Canvas creation with double scrollbar
-    self.hscrollbar = ttk.Scrollbar(self, orient = tk.HORIZONTAL)
-    self.vscrollbar = ttk.Scrollbar(self, orient = tk.VERTICAL)
-    self.sizegrip = ttk.Sizegrip(self)
-    self.canvas = tk.Canvas(self, bd=0, highlightthickness=0, 
-                                  yscrollcommand = self.vscrollbar.set,
-                                  xscrollcommand = self.hscrollbar.set)
-    self.vscrollbar.config(command = self.canvas.yview)
-    self.hscrollbar.config(command = self.canvas.xview)
-    self.pack()
-    self.get_frame()
-
-  def pack(self, **kwargs):
-    '''
-      Pack the scrollbar and canvas correctly in order to recreate the same look as MFC's windows. 
-    '''
-
-    self.hscrollbar.pack(side=tk.BOTTOM, fill=tk.X, expand=tk.FALSE)
-    self.vscrollbar.pack(side=tk.RIGHT, fill=tk.Y,  expand=tk.FALSE)
-    self.sizegrip.pack(in_ = self.hscrollbar, side = tk.BOTTOM, anchor = "se")
-    self.canvas.pack(side=tk.LEFT, padx=5, pady=5,
-                                             fill=tk.BOTH, expand=tk.TRUE)
-
-    ttk.Frame.pack(self, **kwargs)
-    
-
-  def get_frame(self):
-    '''
-      Return the "frame" useful to place inner controls.
-    '''
-    return self.canvas
-"""
 
 class NewWindow(Toplevel):
     '''
+    Adapted from https://www.geeksforgeeks.org/open-a-new-window-with-a-button-in-python-tkinter/
+    and https://gist.github.com/RamonWill/0686bd8c793e2e755761a8f20a42c762
+
     This class was built to allow a new window to open with information uploaded
     from a csv or json present in the new window. It was utilized to allow a 
     user of our program to see the underlying data affecting our outputs.
-
-
-
-    adapted from https://www.geeksforgeeks.org/open-a-new-window-with-a-button-in-python-tkinter/
-    and https://gist.github.com/RamonWill/0686bd8c793e2e755761a8f20a42c762
     '''
     def __init__(self, file, master): 
         '''
@@ -145,6 +100,7 @@ class NewWindow(Toplevel):
         self.file = file 
         self.fill_window() 
     
+
     # Treeview Widget
     def fill_window(self):
         '''
@@ -176,7 +132,7 @@ class NewWindow(Toplevel):
 
             df_rows = df.to_numpy().tolist() # turns the dataframe into a list of lists
             for row in df_rows:
-                tv1.insert("", "end", values=row) # inserts each list into the treeview. For parameters see https://docs.python.org/3/library/tkinter.ttk.html#tkinter.ttk.Treeview.insert
+                tv1.insert("", "end", values=row) # inserts each list into the treeview
         else:
             df = pd.read_csv(self.file)
 
