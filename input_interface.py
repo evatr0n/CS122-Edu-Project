@@ -82,7 +82,7 @@ class Window1:
         default_opt_frame = tk.Frame(self.frame, bg = "dark blue")
         default_opt_frame.pack(expand=True, fill='x')
         #grid(column = 0, row = 1)
-        option1_label = ttk.Label(default_opt_frame, text = "Option 1 Retrieve information on how effective a state's relevant policies are for all or particular educational outcomes: ").grid(column = 0,  
+        option1_label = ttk.Label(default_opt_frame, text = "Option 1 Retrieve information on how effective a state's relevant policies are in relation to all available educational outcomes: ").grid(column = 0,  
         row = 0, padx = 35, pady = 25, columnspan = 3)
         # State Selection Label
         state_label = ttk.Label(default_opt_frame, text = "Select one state, or select multiple to compare").grid(column = 0,  
