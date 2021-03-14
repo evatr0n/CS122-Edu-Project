@@ -108,10 +108,12 @@ def get_scores(states_overall_effectiveness_score, state_to_policy_effectiveness
     denom = maximum - minimum
     for key in dic.keys():
         if denom == 0:
-            dic[key] = 0.5
+            dic[key] = 50
         else:
             val = dic[key]
             norm_val = (val - minimum) / denom
+            norm_val *= 100
+            norm_val = round(norm_val, 2)
             dic[key] = norm_val
     score = states_overall_effectiveness_score[state]
     policy_to_eff = state_to_policy_effectiveness_score[state]
