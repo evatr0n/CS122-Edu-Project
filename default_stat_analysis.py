@@ -85,6 +85,23 @@ def default_calc(average_nctq, centered_average_nctq, NCES_df, R2, block_negativ
     
 
 def get_scores(states_overall_effectiveness_score, state_to_policy_effectiveness_score, state):
+    """
+    Outputs state overall effectiveness score of input state from normalized state overall effectiveness scores.  
+    Also outputs the policies for that state with the highest (best) effectiveness score and the lowest (worst)
+    effectiveness score
+    
+    Inputs:
+    states_overall_effectiveness_score (dict): a dictionary of the form {state: overall effectiveness score};
+                                               output from default_calc
+    state_to_policy_effectiveness_score (dict): a dictionary of the form {state: {policy: score} }
+                                                output from default_calc
+    state (str): capitalized, two letter abbreviation for the state of interest
+    
+    Outputs:
+    (tuple) the state overall effectiveness score from the normalized overall effectiveness scores,
+            the best policy, and the worst policy
+    """
+    
     # for example this state's score is in what percentile of states' overall_effectiveness scores
     # get policy with best and worst effectiveness scores for the state
     # Compare to US average. 
