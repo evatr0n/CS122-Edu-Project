@@ -213,8 +213,10 @@ class Window1:
             return_dict[state] = [score, best_pol, worst_pol]
         print("states" + str(states))
         # for testing purposes
+        """
         return_dict = {"IL": [50, "Pay Scales (Retaining Effective Teachers Policy)", "	Academic Requirements (Early Childhood Preparation Policy)"], 
         "CA": [75, "Pension Flexibility (Retaining Effective Teachers Policy)", "Induction (Retaining Effective Teachers Policy)"]}
+        """
         self.new_window1(return_dict, outcomes)
 
 
@@ -231,8 +233,10 @@ class Window1:
         print("states" + str(states))
         print("outcomes" + str(outcomes))
         # for testing purposes
+        """
         return_dict = {"IL": [50, "Pay Scales (Retaining Effective Teachers Policy)", "	Academic Requirements (Early Childhood Preparation Policy)"], 
         "CA": [75, "Pension Flexibility (Retaining Effective Teachers Policy)", "Induction (Retaining Effective Teachers Policy)"]}
+        """
         self.new_window1(return_dict, outcomes)
 
 
