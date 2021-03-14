@@ -90,12 +90,12 @@ class Window1:
 
         # State Selection listbox widget
         self.state_listbox = tk.Listbox(default_opt_frame, selectmode = "multiple", exportselection = False, width=20, height=10)
-        self.state_listbox.grid(column = 0, row = 2, sticky="E")
+        self.state_listbox.grid(column = 0, row = 2, sticky="E", pady = 25)
         # Adding scrollbar to listbox
         state_scrollbar = tk.Scrollbar(default_opt_frame)
         state_scrollbar.config(command=self.state_listbox.yview)
         self.state_listbox.config(yscrollcommand=state_scrollbar.set)
-        state_scrollbar.grid(column=1, row=2, sticky='NSW')
+        state_scrollbar.grid(column=1, row=2, sticky='NSW', pady = 25)
 
         # Populating scrollbar
         for i, state in enumerate(states): 
